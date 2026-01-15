@@ -1,0 +1,54 @@
+* {
+  box-sizing: border-box;
+}
+
+.home {
+  min-height: 100vh;
+  display: grid;
+  gap: 1rem;
+  place-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  background: #0b0b1a;
+  color: #ffffff;
+
+  &__title {
+    margin: 0;
+  }
+
+  &__field {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+  }
+
+  &__label {
+    font-size: 0.95rem;
+  }
+
+  &__input {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #2a2a3d;
+    background: #141428;
+    color: inherit;
+  }
+
+  &__button {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 999px;
+    background: #ff2d55;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  &__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+

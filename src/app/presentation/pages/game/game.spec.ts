@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Game } from './game';
+import { GamePage } from './game';
 
-describe('Game', () => {
-  let component: Game;
-  let fixture: ComponentFixture<Game>;
+describe('GamePage', () => {
+  let component: GamePage;
+  let fixture: ComponentFixture<GamePage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Game]
+      imports: [GamePage]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Game);
+    fixture = TestBed.createComponent(GamePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -21,3 +21,4 @@ describe('Game', () => {
     expect(component).toBeTruthy();
   });
 });
+

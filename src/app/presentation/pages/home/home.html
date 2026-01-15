@@ -1,0 +1,21 @@
+<section class="home">
+  <h1 class="home__title">Touch the Mole</h1>
+  <label class="home__field">
+    <span class="home__label">Nombre del jugador</span>
+    <input
+      type="text"
+      class="home__input"
+      [formControl]="nameControl"
+      placeholder="Tu nombre"
+    />
+  </label>
+  <button
+    type="button"
+    class="home__button"
+    [disabled]="nameControl.invalid"
+    (click)="start()"
+  >
+    Start
+  </button>
+</section>
+

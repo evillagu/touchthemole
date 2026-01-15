@@ -1,0 +1,24 @@
+<section class="game">
+  <header class="game__header">
+    <app-score-board
+      [playerName]="gameState().playerName"
+      [points]="gameState().points"
+    ></app-score-board>
+    <label class="game__stat">
+      <span class="game__label">Dificultad</span>
+      <select
+        class="game__select"
+        [value]="gameState().difficulty.id"
+        (change)="onDifficultyChange($event)"
+      >
+        @for (difficulty of difficulties; track difficulty.id) {
+          <option [value]="difficulty.id">{{ difficulty.label }}</option>
+        }
+      </select>
+    </label>
+    <button type="button" class="game__play" (click)="onRestart()">Play</button>
+  </header>
+
+  <app-game-board [holes]="holes" [onHit]="handleHit"></app-game-board>
+</section>
+

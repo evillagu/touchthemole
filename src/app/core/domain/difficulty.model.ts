@@ -4,5 +4,9 @@ export interface Difficulty {
   readonly multiplier: number;
 }
 
-
+export enum DifficultyId {
+  Low = 'low',
+  Medium = 'medium',
+  High = 'high'
+}
 
