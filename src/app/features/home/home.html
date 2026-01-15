@@ -1,0 +1,8 @@
+<section class="home">
+  <h1>Touch the Mole</h1>
+  <label class="field">
+    <span>Nombre del jugador</span>
+    <input type="text" [formControl]="nameControl" placeholder="Tu nombre" />
+  </label>
+  <button type="button" [disabled]="nameControl.invalid">Start</button>
+</section>

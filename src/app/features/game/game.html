@@ -1,0 +1,27 @@
+<section class="game">
+  <header class="game-header">
+    <div class="stat">
+      <span class="label">Jugador</span>
+      <strong class="value">Nombre</strong>
+    </div>
+    <div class="stat">
+      <span class="label">Puntos</span>
+      <strong class="value">0</strong>
+    </div>
+    <label class="stat">
+      <span class="label">Dificultad</span>
+      <select class="select">
+        <option value="low">Bajo</option>
+        <option value="medium">Medio</option>
+        <option value="high">Alto</option>
+      </select>
+    </label>
+    <button type="button" class="play">Play</button>
+  </header>
+
+  <div class="grid">
+    @for (hole of holes; track $index) {
+      <button type="button" class="hole"></button>
+    }
+  </div>
+</section>
