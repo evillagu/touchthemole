@@ -1,8 +1,12 @@
 ## Fase inicial: creación y PWA
 
 ### 1) Creación del proyecto
-- Comando: `ng new touch-the-mole --skip-git --style=css`
 - Resultado: se generó la base del proyecto Angular en `touch-the-mole`.
+- Configuraciones vigentes al crear el proyecto:
+  - Angular: `20.3.x` (según `package.json`).
+  - Estilos por defecto: `scss` (según `angular.json`).
+  - TypeScript en modo estricto (`strict: true`).
+  - Rutas base: definidas en `src/app/app.routes.ts`.
 
 ### 2) Soporte PWA
 - Comando: `ng add @angular/pwa --skip-confirmation`
@@ -22,12 +26,13 @@
 - Objetivo: cachear recursos esenciales para funcionamiento offline.
 
 ### 5) Estructura Hexagonal en src/app
-- `core/models`: contratos de datos (User, GameState, Difficulty).
-- `core/ports`: interfaces para servicios.
+- `core/domain`: modelos (interfaces).
+- `core/ports`: puertos (interfaces de servicios).
+- `application/use-cases`: casos de uso y lógica de negocio.
 - `infrastructure/adapters`: implementaciones concretas.
-- `application/use-cases`: casos de uso.
-- `features`: `home` y `game` como vistas.
-- `shared`: componentes comunes.
+- `presentation/pages`: vistas (`home`, `game`).
+- `presentation/components`: componentes atómicos.
+- `shared`: utilidades y componentes comunes.
 
 ### 6) Routing base
 - Archivo: `src/app/app.routes.ts`
