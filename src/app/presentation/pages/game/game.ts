@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation, inject, signal, WritableSignal } from '@angular/core';
+import { Router } from '@angular/router';
 import { applyHit } from '../../../application/use-cases/apply-hit.use-case';
 import { changeDifficulty } from '../../../application/use-cases/change-difficulty.use-case';
 import { listDifficulties, resolveDifficulty } from '../../../application/use-cases/difficulty.use-case';
@@ -42,6 +43,12 @@ export class GamePageComponent {
     this.updateState(startGame(current.playerName, current.difficulty));
   }
 
+  onChangePlayer(): void {
+    this.repository.clear();
+    this.router.navigate(['/home']);
+  }
+
+  private readonly router = inject(Router);
   private readonly repository = inject(GAME_STATE_REPOSITORY);
 
   private updateState(state: GameState): void {
