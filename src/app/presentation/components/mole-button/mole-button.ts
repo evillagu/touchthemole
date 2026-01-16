@@ -4,7 +4,7 @@ import { Component, output } from '@angular/core';
   selector: 'app-mole-button',
   templateUrl: './mole-button.html'
 })
-export class MoleButton {
+export class MoleButtonComponent {
   readonly hit = output<void>();
 }
 

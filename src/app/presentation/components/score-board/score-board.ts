@@ -4,7 +4,7 @@ import { Component, input } from '@angular/core';
   selector: 'app-score-board',
   templateUrl: './score-board.html'
 })
-export class ScoreBoard {
+export class ScoreBoardComponent {
   readonly playerName = input<string>('');
   readonly points = input<number>(0);
 }

@@ -5,17 +5,17 @@ import { listDifficulties, resolveDifficulty } from '../../../application/use-ca
 import { startGame } from '../../../application/use-cases/start-game.use-case';
 import { GameState } from '../../../core/domain/game-state.model';
 import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository.token';
-import { GameBoard } from '../../components/game-board/game-board';
-import { ScoreBoard } from '../../components/score-board/score-board';
+import { GameBoardComponent } from '../../components/game-board/game-board';
+import { ScoreBoardComponent } from '../../components/score-board/score-board';
 
 @Component({
   selector: 'app-game-page',
-  imports: [GameBoard, ScoreBoard],
+  imports: [GameBoardComponent, ScoreBoardComponent],
   templateUrl: './game.html',
   styleUrl: './game.scss',
   encapsulation: ViewEncapsulation.None
 })
-export class GamePage {
+export class GamePageComponent {
   readonly difficulties = listDifficulties();
   readonly holes = Array.from({ length: 9 }, (_, index) => index);
   readonly gameState: WritableSignal<GameState>;
