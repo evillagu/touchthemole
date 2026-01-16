@@ -131,6 +131,169 @@ Configuración principal de la aplicación Angular. Define todos los proveedores
 
 **Arquitectura:** Este archivo es el punto de entrada de configuración de Angular y establece la conexión entre las capas de la aplicación, especialmente la inyección del adaptador de infraestructura (`LocalStorageGameStateAdapter`) como implementación del puerto del dominio (`GameStateRepository`).
 
+**Configuración de i18n en `app.config.ts`:**
+
+- **`registerLocaleData(localeEs)`**: Registra los datos de localización para español importados desde `@angular/common/locales/es`. Esto habilita el formato de fechas, números y monedas según las convenciones del idioma español.
+
+- **`LOCALE_ID`**: Proveedor configurado con el valor `'es'` para establecer el locale español como predeterminado en toda la aplicación. Esto afecta a pipes como `DatePipe`, `CurrencyPipe` y `DecimalPipe`.
+
+---
+
+## Internacionalización (i18n)
+
+El proyecto implementa internacionalización utilizando el sistema nativo de Angular i18n basado en el estándar XLIFF (XML Localization Interchange File Format). Esta implementación permite localizar todos los textos de la aplicación.
+
+### Archivos de configuración de i18n
+
+#### `src/locale/messages.es.xlf`
+
+Archivo de traducciones en formato XLIFF 1.2 que contiene todas las cadenas de texto localizadas para el idioma español (es).
+
+**Estructura:**
+- Utiliza el formato estándar XLIFF 1.2 con elementos `<trans-unit>` para cada cadena traducible
+- Cada `trans-unit` tiene un `id` único que identifica la cadena (ej: `@@app.title`, `@@home.playerName.label`)
+- Contiene elementos `<source>` (texto original) y `<target>` (traducción)
+- El atributo `datatype="html"` indica que las cadenas pueden contener HTML
+
+**Cadenas incluidas:**
+- Títulos y etiquetas de la aplicación
+- Textos de botones
+- Placeholders de formularios
+- Etiquetas de componentes (jugador, puntos, dificultad)
+- Nombres de dificultades (Bajo, Medio, Alto)
+- Valores por defecto (nombre de jugador)
+
+**Propósito:** Centraliza todas las traducciones en un único archivo, facilitando la gestión y actualización de textos localizados.
+
+---
+
+#### `angular.json`
+
+Configuración de localización y polyfills en las opciones de build.
+
+**Configuración de polyfills:**
+- **`polyfills`**: Array que incluye:
+  - `"zone.js"`: Polyfill para la detección de cambios de Angular
+  - `"@angular/localize/init"`: Polyfill que proporciona la función global `$localize` en tiempo de ejecución. Este polyfill debe estar configurado aquí en lugar de importarse directamente en el código para evitar warnings del compilador.
+
+**Configuración de localización:**
+- **`production-es`**: Configuración de producción con localización habilitada:
+  - `"localize": ["es"]`: Habilita la compilación localizada para español. Cuando se compila con esta configuración, Angular genera bundles específicos para el idioma español.
+
+**Builder de extracción:**
+- **`extract-i18n`**: Builder configurado para extraer cadenas marcadas con la directiva `i18n` de los templates HTML. Permite generar o actualizar archivos de traducción automáticamente.
+
+**Propósito:** Configura el sistema de build para soportar localización, incluyendo el polyfill necesario para `$localize` y las opciones de compilación localizada.
+
+---
+
+#### `global.d.ts`
+
+Archivo de declaración de tipos TypeScript que define la función global `$localize`.
+
+**Contenido:**
+```typescript
+declare const $localize: {
+  (messageParts: TemplateStringsArray, ...expressions: readonly unknown[]): string;
+};
+```
+
+**Propósito:**
+- Proporciona la declaración de tipos para `$localize` como función de tagged template
+- Permite que TypeScript reconozca `$localize` como función global disponible en tiempo de compilación
+- Resuelve errores de tipo `TS2304: Cannot find name '$localize'`
+- El archivo está incluido explícitamente en `tsconfig.json` mediante `"files": ["global.d.ts"]` para garantizar su reconocimiento por el compilador
+
+**Uso:** Esta declaración permite usar `$localize` en código TypeScript con soporte completo de tipos y autocompletado del IDE.
+
+---
+
+#### `package.json`
+
+Gestiona la dependencia necesaria para i18n.
+
+**Dependencia:**
+- **`@angular/localize`**: Versión `^20.0.0`, compatible con Angular 20. Este paquete proporciona:
+  - La función `$localize` en tiempo de ejecución
+  - Utilidades para la localización
+  - Soporte para el estándar XLIFF
+
+**Propósito:** Asegura que el paquete necesario para la internacionalización esté disponible en la aplicación.
+
+---
+
+### Implementación de i18n en el código
+
+#### Templates HTML
+
+Los templates utilizan la directiva `i18n` para marcar cadenas de texto que requieren traducción.
+
+**Sintaxis:**
+- `i18n="@@id"`: Marca un elemento con un identificador único
+- `i18n-placeholder="@@id"`: Marca el atributo `placeholder` de un input
+- `i18n-title="@@id"`: Marca el atributo `title` de un elemento
+
+**Ejemplos de uso:**
+- `home.html`: Título de la aplicación, etiquetas de formulario, botones
+- `game.html`: Etiquetas de dificultad y botones
+- `score-board.html`: Etiquetas de jugador y puntos
+
+**Archivos actualizados:**
+- `src/app/presentation/pages/home/home.html`
+- `src/app/presentation/pages/game/game.html`
+- `src/app/presentation/components/score-board/score-board.html`
+
+---
+
+#### Código TypeScript
+
+El código TypeScript utiliza la función global `$localize` con sintaxis de tagged template para literales en tiempo de ejecución.
+
+**Sintaxis:**
+```typescript
+$localize`:@@id:Texto original`
+```
+
+**Archivos que utilizan `$localize`:**
+
+1. **`difficulty.use-case.ts`**: Etiquetas de dificultades:
+   - `$localize`:@@difficulty.low:Bajo``
+   - `$localize`:@@difficulty.medium:Medio``
+   - `$localize`:@@difficulty.high:Alto``
+
+2. **`start-game.use-case.ts`**: Nombre de jugador por defecto:
+   - `$localize`:@@game.defaultPlayerName:Jugador``
+
+**Ventajas:**
+- Permite localizar literales en código TypeScript, no solo en templates
+- Mantiene la coherencia con el sistema de i18n de Angular
+- Las cadenas se extraen automáticamente durante la compilación
+
+---
+
+### Flujo de trabajo de i18n
+
+1. **Marcado de cadenas**: Los desarrolladores marcan cadenas en templates con `i18n` y en código con `$localize`
+2. **Extracción**: El comando `ng extract-i18n` extrae todas las cadenas marcadas y genera/actualiza el archivo XLIFF
+3. **Traducción**: Los traductores editan el archivo XLIFF añadiendo las traducciones en el elemento `<target>`
+4. **Compilación**: Al compilar con `--configuration=production-es`, Angular genera bundles localizados
+5. **Ejecución**: La aplicación carga las traducciones según el locale configurado
+
+---
+
+### Comandos relacionados con i18n
+
+```bash
+# Extraer cadenas de texto para traducción
+ng extract-i18n
+
+# Compilar para producción con localización
+ng build --configuration=production-es
+
+# Servir aplicación con localización
+ng serve --configuration=production-es
+```
+
 ---
 
 ## Características Comunes

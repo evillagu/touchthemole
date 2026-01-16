@@ -5,7 +5,7 @@
       [points]="gameState().points"
     ></app-score-board>
     <label class="game__stat">
-      <span class="game__label">Dificultad</span>
+      <span class="game__label" i18n="@@game.difficulty.label">Dificultad</span>
       <select
         class="game__select"
         [value]="gameState().difficulty.id"
@@ -16,7 +16,7 @@
         }
       </select>
     </label>
-    <button type="button" class="game__play" (click)="onRestart()">Play</button>
+    <button type="button" class="game__play" (click)="onRestart()" i18n="@@game.play.button">Play</button>
   </header>
 
   <app-game-board [holes]="holes" [onHit]="handleHit"></app-game-board>
