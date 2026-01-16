@@ -12,7 +12,7 @@ import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class HomePage {
+export class HomePageComponent {
   readonly nameControl: FormControl<string>;
 
   constructor() {
