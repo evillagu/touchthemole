@@ -1,14 +1,17 @@
-## Reglas ES6 y configuracion del proyecto
+# Reglas ES6 y configuracion del proyecto
 
-### Objetivo
+## Objetivo
+
 Aplicar reglas ES6 de forma consistente en todo el proyecto usando ESLint.
 
-### Configuracion global
+## Configuracion global
+
 - Archivo de reglas: `eslint.config.mjs`.
 - Alcance: todo el proyecto para `*.ts`.
 - Script: `npm run lint`.
 
-### Reglas ES6 activas
+## Reglas ES6 activas
+
 - `@typescript-eslint/member-ordering`: metodos publicos arriba y privados abajo.
 - `@typescript-eslint/no-explicit-any`: prohíbe el uso de `any`.
 - `no-var`: obliga a usar `const` o `let`.
@@ -30,7 +33,7 @@ Aplicar reglas ES6 de forma consistente en todo el proyecto usando ESLint.
 - `@typescript-eslint/no-useless-constructor`: evita constructores vacios.
 - `@typescript-eslint/no-dupe-class-members`: evita miembros duplicados.
 
-### Uso
+## Uso
+
 1. Instalar dependencias: `npm install`.
 2. Ejecutar lint: `npm run lint`.
-

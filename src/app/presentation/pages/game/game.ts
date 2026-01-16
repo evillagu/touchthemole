@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, inject, signal } from '@angular/core';
+import { Component, ViewEncapsulation, inject, signal, WritableSignal } from '@angular/core';
 import { applyHit } from '../../../application/use-cases/apply-hit.use-case';
 import { changeDifficulty } from '../../../application/use-cases/change-difficulty.use-case';
 import { listDifficulties, resolveDifficulty } from '../../../application/use-cases/difficulty.use-case';
@@ -16,17 +16,20 @@ import { ScoreBoard } from '../../components/score-board/score-board';
   encapsulation: ViewEncapsulation.None
 })
 export class GamePage {
-  private readonly repository = inject(GAME_STATE_REPOSITORY);
   readonly difficulties = listDifficulties();
   readonly holes = Array.from({ length: 9 }, (_, index) => index);
-  readonly gameState = signal<GameState>(
-    this.repository.load() ?? startGame('Jugador', this.difficulties[0])
-  );
+  readonly gameState: WritableSignal<GameState>;
+  readonly handleHit: () => void;
 
-  readonly handleHit = (): void => {
-    const nextState = applyHit(this.gameState());
-    this.updateState(nextState);
-  };
+  constructor() {
+    this.gameState = signal<GameState>(
+      this.repository.load() ?? startGame('Jugador', this.difficulties[0])
+    );
+    this.handleHit = (): void => {
+      const nextState = applyHit(this.gameState());
+      this.updateState(nextState);
+    };
+  }
 
   onDifficultyChange(event: Event): void {
     const target = event.target as HTMLSelectElement | null;
@@ -38,6 +41,8 @@ export class GamePage {
     const current = this.gameState();
     this.updateState(startGame(current.playerName, current.difficulty));
   }
+
+  private readonly repository = inject(GAME_STATE_REPOSITORY);
 
   private updateState(state: GameState): void {
     this.gameState.set(state);

@@ -8,3 +8,4 @@ export class MoleButton {
   readonly hit = output<void>();
 }
 
+

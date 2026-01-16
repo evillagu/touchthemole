@@ -6,3 +6,4 @@ export interface GameState {
   readonly difficulty: Difficulty;
 }
 
+

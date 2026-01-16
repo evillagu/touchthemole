@@ -9,3 +9,4 @@ export class ScoreBoard {
   readonly points = input<number>(0);
 }
 
+
