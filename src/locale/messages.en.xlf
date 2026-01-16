@@ -50,6 +50,10 @@
         <source>Jugador</source>
         <target>Player</target>
       </trans-unit>
+      <trans-unit id="game.exit.button" datatype="html">
+        <source>Salir</source>
+        <target>Exit</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
