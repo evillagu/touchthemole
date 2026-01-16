@@ -4,6 +4,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
+    "composite": true,
     "types": [
       "node"
     ],
@@ -17,7 +18,8 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "global.d.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts"

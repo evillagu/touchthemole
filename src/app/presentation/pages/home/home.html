@@ -1,11 +1,12 @@
 <section class="home">
-  <h1 class="home__title">Touch the Mole</h1>
+  <h1 class="home__title" i18n="@@app.title">Touch the Mole</h1>
   <label class="home__field">
-    <span class="home__label">Nombre del jugador</span>
+    <span class="home__label" i18n="@@home.playerName.label">Nombre del jugador</span>
     <input
       type="text"
       class="home__input"
       [formControl]="nameControl"
+      i18n-placeholder="@@home.playerName.placeholder"
       placeholder="Tu nombre"
     />
   </label>
@@ -14,6 +15,7 @@
     class="home__button"
     [disabled]="nameControl.invalid"
     (click)="start()"
+    i18n="@@home.start.button"
   >
     Start
   </button>

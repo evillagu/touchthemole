@@ -43,6 +43,43 @@ Este proyecto utiliza una configuración estructurada para gestionar la compilac
 
 - **`angular.json`**: Orquesta todo usando los builders de alto rendimiento (`@angular/build:application` y `@angular/build:dev-server`).
 
+## Internacionalización (i18n)
+
+El proyecto implementa internacionalización utilizando el sistema nativo de Angular i18n basado en el estándar XLIFF (XML Localization Interchange File Format).
+
+### Configuración de i18n
+
+- **`src/locale/messages.es.xlf`**: Archivo de traducciones en formato XLIFF 1.2 que contiene todas las cadenas de texto localizadas para el idioma español (es). Utiliza el formato estándar de Angular con trans-units identificados por IDs únicos.
+
+- **`angular.json`**: Configuración de localización en las configuraciones de build:
+  - **`production-es`**: Configuración de producción con localización habilitada para español mediante la opción `"localize": ["es"]`
+  - **`extract-i18n`**: Builder configurado para extraer cadenas marcadas con la directiva `i18n` de los templates
+
+- **`app.config.ts`**: Configuración del proveedor de locale:
+  - **`LOCALE_ID`**: Proveedor configurado con el valor `'es'` para establecer el locale español como predeterminado
+  - **`registerLocaleData(localeEs)`**: Registro de los datos de localización para español importados desde `@angular/common/locales/es`
+
+- **`global.d.ts`**: Archivo de declaración de tipos TypeScript que define la función global `$localize` como una función de tagged template. Esta declaración permite que TypeScript reconozca `$localize` como función global disponible en tiempo de compilación, resolviendo errores de tipo `TS2304: Cannot find name '$localize'`. El archivo está incluido explícitamente en `tsconfig.json` mediante la propiedad `"files": ["global.d.ts"]` para garantizar su reconocimiento por el compilador.
+
+### Implementación de i18n
+
+- **Templates HTML**: Utilizan la directiva `i18n` con identificadores únicos (ej: `i18n="@@app.title"`) para marcar cadenas de texto que requieren traducción
+- **Código TypeScript**: Utiliza la función global `$localize` con sintaxis de tagged template para literales en tiempo de ejecución (ej: `$localize`:@@game.defaultPlayerName:Jugador``)
+- **Atributos**: Los atributos HTML como `placeholder` utilizan la variante `i18n-placeholder` para su localización
+
+### Comandos relacionados con i18n
+
+```bash
+# Extraer cadenas de texto para traducción
+ng extract-i18n
+
+# Compilar para producción con localización
+ng build --configuration=production-es
+
+# Servir aplicación con localización
+ng serve --configuration=production-es
+```
+
 ## Servidor de desarrollo
 
 Para iniciar un servidor de desarrollo local, ejecuta:

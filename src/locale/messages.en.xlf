@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="app.title" datatype="html">
+        <source>Touch the Mole</source>
+        <target>Touch the Mole</target>
+      </trans-unit>
+      <trans-unit id="home.playerName.label" datatype="html">
+        <source>Nombre del jugador</source>
+        <target>Player name</target>
+      </trans-unit>
+      <trans-unit id="home.playerName.placeholder" datatype="html">
+        <source>Tu nombre</source>
+        <target>Your name</target>
+      </trans-unit>
+      <trans-unit id="home.start.button" datatype="html">
+        <source>Start</source>
+        <target>Start</target>
+      </trans-unit>
+      <trans-unit id="game.difficulty.label" datatype="html">
+        <source>Dificultad</source>
+        <target>Difficulty</target>
+      </trans-unit>
+      <trans-unit id="game.play.button" datatype="html">
+        <source>Play</source>
+        <target>Play</target>
+      </trans-unit>
+      <trans-unit id="scoreboard.player.label" datatype="html">
+        <source>Jugador</source>
+        <target>Player</target>
+      </trans-unit>
+      <trans-unit id="scoreboard.points.label" datatype="html">
+        <source>Puntos</source>
+        <target>Points</target>
+      </trans-unit>
+      <trans-unit id="difficulty.low" datatype="html">
+        <source>Bajo</source>
+        <target>Low</target>
+      </trans-unit>
+      <trans-unit id="difficulty.medium" datatype="html">
+        <source>Medio</source>
+        <target>Medium</target>
+      </trans-unit>
+      <trans-unit id="difficulty.high" datatype="html">
+        <source>Alto</source>
+        <target>High</target>
+      </trans-unit>
+      <trans-unit id="game.defaultPlayerName" datatype="html">
+        <source>Jugador</source>
+        <target>Player</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -28,7 +28,9 @@
     "typeCheckHostBindings": true,
     "strictTemplates": true
   },
-  "files": [],
+  "files": [
+    "global.d.ts"
+  ],
   "references": [
     {
       "path": "./tsconfig.app.json"
