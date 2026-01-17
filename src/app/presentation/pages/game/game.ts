@@ -14,7 +14,7 @@ import { ScoreBoardComponent } from '../../components/score-board/score-board';
   imports: [GameBoardComponent, ScoreBoardComponent],
   templateUrl: './game.html',
   styleUrl: './game.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.Emulated
 })
 export class GamePageComponent implements OnDestroy {
   readonly difficulties = listDifficulties();

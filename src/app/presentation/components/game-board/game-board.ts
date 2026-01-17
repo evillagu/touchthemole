@@ -4,7 +4,8 @@ import { MoleButtonComponent } from '../mole-button/mole-button';
 @Component({
   selector: 'app-game-board',
   imports: [MoleButtonComponent],
-  templateUrl: './game-board.html'
+  templateUrl: './game-board.html',
+  styleUrl: './game-board.scss'
 })
 export class GameBoardComponent {
   readonly holes = input<readonly number[]>([]);

@@ -4,13 +4,86 @@
 
 :root {
   font-size: clamp(14px, 2.5vw, 16px);
+
   --spacing-unit: clamp(0.5rem, 2vw, 1.5rem);
   --spacing-small: clamp(0.25rem, 1vw, 0.75rem);
   --spacing-large: clamp(1rem, 4vw, 2rem);
+  --spacing-tiny: 5px;
+  --spacing-medium: 10px;
+  --spacing-container: 25px;
+  --spacing-container-large: 41px;
+
   --border-radius: clamp(0.5rem, 1.5vw, 1rem);
   --border-radius-box: clamp(4.5rem, 9.5vw, 5rem);
+  --border-radius-pill: 999px;
+  --border-width: 2px;
+  --border-width-thin: 1px;
+
   --font-size-small: clamp(0.65rem, 1.8vw, 0.75rem);
   --font-size-base: clamp(0.875rem, 2.5vw, 1rem);
   --font-size-large: clamp(1rem, 3vw, 1.5rem);
   --font-size-title: clamp(1.5rem, 5vw, 2.5rem);
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --letter-spacing: 0.08em;
+
+  --color-primary: #001391;
+  --color-primary-dark: #070e46;
+  --color-primary-darker: #0b0b1a;
+  --color-primary-light: #22538b;
+  --color-primary-lighter: #2474cf;
+  --color-primary-lightest: #103f74;
+
+  --color-accent: #ffd93d;
+  --color-accent-dark: #ffc107;
+
+  --color-success: #00ff00;
+  --color-success-dark: #2a4a2a;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-dark: #1b1b2f;
+  --color-gray-medium: #2a2a3d;
+  --color-gray-light: #3a3a4d;
+  --color-gray-lighter: #1a1a2d;
+
+  --color-background-primary: linear-gradient(115deg, var(--color-primary-light), var(--color-primary-lighter), var(--color-primary-lightest));
+  --color-background-hole: var(--color-gray-dark);
+  --color-background-active: var(--color-gray-medium);
+  --color-background-hit: var(--color-success-dark);
+  --color-background-header: var(--color-primary);
+  --color-background-container: var(--color-white);
+  --color-background-button: var(--color-primary-dark);
+  --color-background-button-hover: var(--color-gray-medium);
+  --color-background-button-active: var(--color-gray-lighter);
+
+  --color-border-default: var(--color-gray-medium);
+  --color-border-hover: var(--color-gray-light);
+  --color-border-active: var(--color-accent);
+  --color-border-hit: var(--color-success);
+  --color-border-input: var(--color-primary-dark);
+  --color-border-button: var(--color-white);
+
+  --color-text-primary: var(--color-white);
+  --color-text-secondary: var(--color-primary-dark);
+  --color-text-on-white: var(--color-primary-dark);
+
+  --opacity-label: 0.8;
+  --opacity-disabled: 0.2;
+
+  --shadow-box: 0 12px 30px rgba(0, 0, 0, 0.3);
+
+  --transition-duration: 0.2s;
+  --transition-duration-fast: 200ms;
+
+  --mole-image-size: 80%;
+  --max-width-container: min(90vw, 400px);
+  --max-width-container-large: min(90vw, 600px);
+  --max-width-button: min(90vw, 320px);
+  --max-width-button-small: min(90vw, 300px);
+  --width-container: 80vw;
+  --grid-columns: 3;
+
+  --position-center: 50%;
 }

@@ -4,7 +4,7 @@ Este documento describe la funcionalidad de los casos de uso (use cases) ubicado
 
 ## Estructura
 
-Los casos de uso son funciones puras que encapsulan la lógica de negocio de la aplicación. Cada archivo representa un caso de uso específico relacionado con el juego "Touch the Mole".
+Los casos de uso son funciones puras que encapsulan la lógica de negocio de la aplicación. Cada archivo representa un caso de uso específico relacionado con el juego "Toca el Topo".
 
 ## Archivos
 
