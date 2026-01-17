@@ -9,9 +9,12 @@ import { MoleButtonComponent } from '../mole-button/mole-button';
 export class GameBoardComponent {
   readonly holes = input<readonly number[]>([]);
   readonly onHit = input<(() => void) | undefined>(undefined);
+  readonly activeMoleIndex = input<number | null>(null);
 
-  handleHit(): void {
-    this.onHit()?.();
+  handleHit(holeIndex: number): void {
+    if (this.activeMoleIndex() === holeIndex) {
+      this.onHit()?.();
+    }
   }
 }
 
