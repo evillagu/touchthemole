@@ -23,8 +23,15 @@
     </div>
   </header>
 
-  <app-game-board [holes]="holes" [onHit]="handleHit"></app-game-board>
-<div class="game__footer-bottom">
+  @if (isGameStarted()) {
+    <app-game-board 
+      [holes]="holes" 
+      [onHit]="handleHit"
+      [activeMoleIndex]="activeMoleIndex()"
+    ></app-game-board>
+  }
+
+  <div class="game__footer-bottom">
     <button type="button" class="game__exit" (click)="onChangePlayer()" i18n="@@game.exit.button">Salir</button>
   </div>
 </section>
