@@ -18,8 +18,8 @@
 
 - Archivo: `public/manifest.webmanifest`
 - Cambios:
-  - `name`: "Touch the Mole"
-  - `short_name`: "Touch the Mole"
+  - `name`: "Toca el Topo"
+  - `short_name`: "Toca el Topo"
   - `theme_color`: "#ff2d55"
   - `background_color`: "#ffd93d"
 

@@ -1,0 +1,23 @@
+.score-board {
+  &__stat {
+    display: grid;
+    gap: var(--spacing-small);
+    text-align: center;
+    background: var(--color-white);
+    color: var(--color-text-on-white);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-small);
+  }
+
+  &__label {
+    font-size: var(--font-size-small);
+    opacity: var(--opacity-label);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing);
+  }
+
+  &__value {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
+  }
+}
