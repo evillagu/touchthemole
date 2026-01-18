@@ -61,6 +61,8 @@
     row-gap: var(--spacing-container-large);
     width: var(--width-container);
     place-items: center;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-box);
   }
 }
 
