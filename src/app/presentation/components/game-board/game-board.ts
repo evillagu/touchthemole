@@ -4,17 +4,18 @@ import { MoleButtonComponent } from '../mole-button/mole-button';
 @Component({
   selector: 'app-game-board',
   imports: [MoleButtonComponent],
-  templateUrl: './game-board.html'
+  templateUrl: './game-board.html',
+  styleUrl: './game-board.scss',
 })
 export class GameBoardComponent {
   readonly holes = input<readonly number[]>([]);
-  readonly onHit = input<(() => void) | undefined>(undefined);
-  readonly activeMoleIndex = input<number | null>(null);
+  readonly onHit = input<((holeIndex: number) => void) | undefined>(undefined);
+  readonly activeMoleIndexes = input<number[]>([]);
 
   handleHit(holeIndex: number): void {
-    if (this.activeMoleIndex() === holeIndex) {
-      this.onHit()?.();
+    const activeIndexes = this.activeMoleIndexes();
+    if (activeIndexes.includes(holeIndex)) {
+      this.onHit()?.(holeIndex);
     }
   }
 }
-

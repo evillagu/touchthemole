@@ -1,7 +1,7 @@
-// @ts-check
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
+const prettier = require('eslint-config-prettier');
 
 module.exports = tseslint.config(
   {
@@ -11,9 +11,19 @@ module.exports = tseslint.config(
       ...tseslint.configs.recommended,
       ...tseslint.configs.stylistic,
       ...angular.configs.tsRecommended,
+      prettier,
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      'max-lines-per-function': [
+        'error',
+        { 
+          'max': 20,
+          'skipBlankLines': true,
+          'skipComments': true,
+          'IIFEs': true 
+        }
+      ],
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -30,6 +40,12 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
+    },
+  },
+  {
+    files: ['**/*.spec.ts'],
+    rules: {
+      'max-lines-per-function': 'off',
     },
   },
   {

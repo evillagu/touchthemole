@@ -90,20 +90,6 @@ ng serve
 
 Una vez que el servidor esté en ejecución, abre tu navegador y navega a `http://localhost:4200/`. La aplicación se recargará automáticamente siempre que modifiques alguno de los archivos fuente.
 
-## Generación de código
-
-Angular CLI incluye potentes herramientas de generación de código. Para generar un nuevo componente, ejecuta:
-
-```bash
-ng generate component component-name
-```
-
-Para obtener una lista completa de esquemas disponibles (como `components`, `directives` o `pipes`), ejecuta:
-
-```bash
-ng generate --help
-```
-
 ## Compilación
 
 Para compilar el proyecto, ejecuta:
@@ -121,16 +107,86 @@ Para ejecutar pruebas unitarias con el ejecutor de pruebas [Karma](https://karma
 ```bash
 ng test
 ```
+## Documentación del Proyecto
 
-## Ejecutar pruebas end-to-end
+El proyecto incluye documentación detallada organizada en dos directorios principales:
 
-Para pruebas end-to-end (e2e), ejecuta:
+### Documentación de Configuración (`doc/config/`)
 
-```bash
-ng e2e
-```
+Esta carpeta contiene documentación sobre la configuración y arquitectura del proyecto:
 
-Angular CLI no incluye un framework de pruebas end-to-end por defecto. Puedes elegir uno que se adapte a tus necesidades.
+- **`architecture project.md`**: Describe la arquitectura hexagonal (Domain-Driven Design) implementada en el proyecto, incluyendo las capas (core, application, infrastructure, presentation), el flujo de dependencias, y la estructura de archivos. También documenta las tecnologías y prácticas utilizadas (Angular Signals, i18n, metodología BEM, etc.).
+
+- **`config-PWA.md`**: Documentación completa sobre la configuración de Progressive Web App (PWA), incluyendo:
+  - Configuración del Web App Manifest
+  - Service Worker y estrategias de cache
+  - Meta tags para PWA
+  - Configuración para GitHub Pages
+  - Workflow de despliegue automatizado
+  - Testing y troubleshooting de PWA
+
+- **`creacion.md`**: Documenta la fase inicial de creación del proyecto, incluyendo:
+  - Configuración inicial de Angular 20
+  - Instalación y configuración de PWA
+  - Configuración del manifest y Service Worker
+  - Configuración de la aplicación
+
+- **`reglas-es6.md`**: Documentación completa sobre las reglas ES6 y configuración de ESLint del proyecto, incluyendo:
+  - Configuración global de ESLint
+  - Reglas personalizadas para TypeScript y Angular
+  - Reglas de estilo y nomenclatura
+  - Configuración de reglas recomendadas
+  - Ejemplos y mejores prácticas
+
+### Documentación de Especificaciones (`doc/specifications classes methods/`)
+
+Esta carpeta contiene documentación técnica detallada sobre las clases, métodos y funcionalidades específicas:
+
+- **`use cases.md`**: Especificaciones detalladas de todos los casos de uso de la aplicación, incluyendo:
+  - `apply-hit.use-case.ts`: Lógica para aplicar puntuación al golpear el topo
+  - `change-difficulty.use-case.ts`: Cambio de dificultad durante el juego
+  - `start-game.use-case.ts`: Inicio de nueva partida con validación
+  - `difficulty.use-case.ts`: Gestión de dificultades y configuración centralizada (`GAME_CONFIG`)
+  - Principios de diseño (inmutabilidad, funciones puras, separación de responsabilidades)
+  - Flujos de uso y ejemplos de implementación
+
+- **`i18n.md`**: Documentación completa sobre la configuración y uso de internacionalización (i18n), incluyendo:
+  - Configuración en `angular.json` y `app.config.ts`
+  - Uso de `$localize` en templates y código TypeScript
+  - Archivos XLIFF (español e inglés)
+  - Comandos para extraer y compilar traducciones
+  - Estrategias de testing con i18n
+  - Workflow de traducción y troubleshooting
+
+- **`most relevant methods and classes.md`**: Documentación exhaustiva de los métodos y clases más relevantes de la aplicación, incluyendo:
+  - **Componentes de Páginas**: `HomePageComponent`, `GamePageComponent` (con todos sus métodos públicos y privados)
+  - **Componentes Presentacionales**: `GameBoardComponent`, `MoleButtonComponent`, `ScoreBoardComponent`
+  - **Adaptadores de Infraestructura**: `LocalStorageGameStateAdapter`
+  - **Puertos e Interfaces**: `GameStateRepository`
+  - Flujos de interacción entre componentes
+  - Principios de diseño aplicados (separación de responsabilidades, reactividad, inmutabilidad)
+
+### Documentación de Experiencia de Usuario (`doc/UX/`)
+
+Esta carpeta contiene documentación sobre la experiencia de usuario y diseño de la interfaz:
+
+- **`experence user - ux.md`**: Documentación completa sobre la experiencia de usuario (UX) del juego, incluyendo:
+  - Flujo de navegación y pantallas (Home, Juego)
+  - Reglas de interfaz y validación de formularios
+  - Mecánicas de juego y sistema de dificultad progresiva
+  - Feedback visual e interactivo (efectos de golpe, cambios de color)
+  - Estados de interfaz y reacciones del sistema
+  - Especificaciones técnicas del diseño
+
+### Cómo usar la documentación
+
+- **Para entender la arquitectura**: Comienza con `architecture project.md` y `creacion.md`
+- **Para configurar PWA**: Consulta `config-PWA.md`
+- **Para entender la lógica de negocio**: Revisa `use cases.md`
+- **Para trabajar con componentes**: Consulta `most relevant methods and classes.md`
+- **Para configurar i18n**: Revisa `i18n.md`
+- **Para seguir estándares de código**: Consulta `reglas-es6.md`
+- **Para entender la experiencia de usuario**: Consulta `experence user - ux.md`
 
 ## Recursos adicionales
 

@@ -1,11 +1,16 @@
 {
-  "name": "Touch the Mole",
-  "short_name": "Touch the Mole",
+  "name": "Toca el Topo",
+  "short_name": "Toca el Topo",
+  "description": "Juego interactivo donde debes tocar el topo antes de que desaparezca. Diviértete mejorando tu puntuación y velocidad de reacción.",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "scope": "./",
   "start_url": "./",
   "theme_color": "#ff2d55",
   "background_color": "#ffd93d",
+  "categories": ["games", "entertainment"],
+  "lang": "es",
+  "dir": "ltr",
   "icons": [
     {
       "src": "logo-topo.svg",

@@ -1,16 +1,16 @@
-<button 
-  type="button" 
-  class="game__hole"
-  [class.game__hole--active]="isActive()"
+<button
+  type="button"
+  class="mole-button"
+  [class.mole-button--active]="isActive()"
+  [class.mole-button--hit]="isHit()"
   (click)="onHit()"
 >
   @if (isActive()) {
-    <img 
-      src="icons/topo.svg" 
-      alt="Topo" 
-      class="game__mole-image"
-    />
+  <img
+    src="icons/topo.svg"
+    alt="Topo"
+    class="mole-button__image"
+    [class.mole-button__image--hit]="isHit()"
+  />
   }
 </button>
-
-

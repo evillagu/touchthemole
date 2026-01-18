@@ -3,7 +3,7 @@
   <file source-language="en" datatype="plaintext" original="ng2.template">
     <body>
       <trans-unit id="app.title" datatype="html">
-        <source>Touch the Mole</source>
+        <source>Toca el Topo</source>
         <target>Touch the Mole</target>
       </trans-unit>
       <trans-unit id="home.playerName.label" datatype="html">
