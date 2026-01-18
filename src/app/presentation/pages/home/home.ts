@@ -10,7 +10,7 @@ import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository
   selector: 'app-home-page',
   imports: [ReactiveFormsModule],
   templateUrl: './home.html',
-  styleUrl: './home.scss'
+  styleUrl: './home.scss',
 })
 export class HomePageComponent {
   readonly nameControl: FormControl<string>;
@@ -20,7 +20,16 @@ export class HomePageComponent {
     this.defaultDifficulty = listDifficulties()[0];
     this.nameControl = new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required]
+      validators: [
+        Validators.required,
+        (control) => {
+          const value = control.value;
+          if (typeof value === 'string' && value.trim().length === 0) {
+            return { whitespace: true };
+          }
+          return null;
+        },
+      ],
     });
   }
 
@@ -37,4 +46,3 @@ export class HomePageComponent {
   private readonly repository = inject(GAME_STATE_REPOSITORY);
   private readonly defaultDifficulty: Difficulty;
 }
-

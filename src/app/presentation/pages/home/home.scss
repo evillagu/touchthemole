@@ -46,13 +46,13 @@
     font-size: var(--font-size-base);
     width: 100%;
     max-width: var(--max-width-button);
-  
+
     &:disabled {
       opacity: var(--opacity-disabled);
       cursor: not-allowed;
     }
   }
-  
+
   &__container {
     background: var(--color-background-container);
     color: var(--color-text-on-white);
@@ -61,6 +61,7 @@
     row-gap: var(--spacing-container-large);
     width: var(--width-container);
     place-items: center;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-box);
   }
 }
-
