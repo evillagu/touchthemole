@@ -41,6 +41,9 @@
   --color-success: #00ff00;
   --color-success-dark: #2a4a2a;
 
+  --color-error: #ff0000;
+  --color-error-dark: #cc0000;
+
   --color-white: #ffffff;
   --color-black: #000000;
   --color-gray-dark: #1b1b2f;
@@ -56,7 +59,7 @@
   );
   --color-background-hole: var(--color-gray-dark);
   --color-background-active: var(--color-gray-medium);
-  --color-background-hit: var(--color-success-dark);
+  --color-background-hit: var(--color-error);
   --color-background-header: var(--color-primary);
   --color-background-container: var(--color-white);
   --color-background-button: var(--color-primary-dark);
@@ -66,7 +69,7 @@
   --color-border-default: var(--color-gray-medium);
   --color-border-hover: var(--color-gray-light);
   --color-border-active: var(--color-accent);
-  --color-border-hit: var(--color-success);
+  --color-border-hit: var(--color-error);
   --color-border-input: var(--color-primary-dark);
   --color-border-button: var(--color-white);
 
