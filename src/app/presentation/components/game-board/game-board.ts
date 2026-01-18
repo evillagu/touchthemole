@@ -1,18 +1,21 @@
 import { Component, input } from '@angular/core';
-import { MoleButton } from '../mole-button/mole-button';
+import { MoleButtonComponent } from '../mole-button/mole-button';
 
 @Component({
   selector: 'app-game-board',
-  imports: [MoleButton],
-  templateUrl: './game-board.html'
+  imports: [MoleButtonComponent],
+  templateUrl: './game-board.html',
+  styleUrl: './game-board.scss'
 })
-export class GameBoard {
-  readonly holes = input<ReadonlyArray<number>>([]);
-  readonly onHit = input<() => void>(() => {});
+export class GameBoardComponent {
+  readonly holes = input<readonly number[]>([]);
+  readonly onHit = input<(() => void) | undefined>(undefined);
+  readonly activeMoleIndex = input<number | null>(null);
 
-  handleHit(): void {
-    const handler = this.onHit();
-    handler();
+  handleHit(holeIndex: number): void {
+    if (this.activeMoleIndex() === holeIndex) {
+      this.onHit()?.();
+    }
   }
 }
 

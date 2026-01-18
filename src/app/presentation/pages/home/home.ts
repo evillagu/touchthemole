@@ -3,6 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { listDifficulties } from '../../../application/use-cases/difficulty.use-case';
 import { startGame } from '../../../application/use-cases/start-game.use-case';
+import { Difficulty } from '../../../core/domain/difficulty.model';
 import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository.token';
 
 @Component({
@@ -11,15 +12,17 @@ import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class HomePage {
-  private readonly router = inject(Router);
-  private readonly repository = inject(GAME_STATE_REPOSITORY);
-  private readonly defaultDifficulty = listDifficulties()[0];
+export class HomePageComponent {
+  readonly nameControl: FormControl<string>;
 
-  readonly nameControl = new FormControl('', {
-    nonNullable: true,
-    validators: [Validators.required]
-  });
+  constructor() {
+    this.router = inject(Router);
+    this.defaultDifficulty = listDifficulties()[0];
+    this.nameControl = new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required]
+    });
+  }
 
   start(): void {
     if (this.nameControl.invalid) {
@@ -29,5 +32,9 @@ export class HomePage {
     this.repository.save(state);
     this.router.navigate(['/game']);
   }
+
+  private readonly router: Router;
+  private readonly repository = inject(GAME_STATE_REPOSITORY);
+  private readonly defaultDifficulty: Difficulty;
 }
 

@@ -1,0 +1,42 @@
+.mole-button {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--border-radius);
+  border: var(--border-width) solid var(--color-border-default);
+  background: var(--color-background-hole);
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color var(--transition-duration);
+
+  &:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  &--active {
+    border-color: var(--color-border-active);
+    background: var(--color-background-active);
+  }
+
+  &--hit {
+    border-color: var(--color-border-hit);
+    background: var(--color-background-hit);
+  }
+
+  &__image {
+    width: var(--mole-image-size);
+    height: var(--mole-image-size);
+    object-fit: contain;
+    position: absolute;
+    top: var(--position-center);
+    left: var(--position-center);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    background-color: var(--color-white);
+    transition: filter var(--transition-duration);
+
+    &--hit {
+      filter: brightness(1.5) saturate(2);
+    }
+  }
+}
