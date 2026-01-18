@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { listDifficulties } from '../../../application/use-cases/difficulty.use-case';
 import { startGame } from '../../../application/use-cases/start-game.use-case';
@@ -13,31 +13,36 @@ import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository
   styleUrl: './home.scss',
 })
 export class HomePageComponent {
-  readonly nameControl: FormControl<string>;
+  readonly form: FormGroup<{
+    playerName: FormControl<string>;
+  }>;
 
   constructor() {
     this.router = inject(Router);
     this.defaultDifficulty = listDifficulties()[0];
-    this.nameControl = new FormControl('', {
-      nonNullable: true,
-      validators: [
-        Validators.required,
-        (control) => {
-          const value = control.value;
-          if (typeof value === 'string' && value.trim().length === 0) {
-            return { whitespace: true };
-          }
-          return null;
-        },
-      ],
+    this.form = new FormGroup({
+      playerName: new FormControl('', {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          (control) => {
+            const value = control.value;
+            if (typeof value === 'string' && value.trim().length === 0) {
+              return { whitespace: true };
+            }
+            return null;
+          },
+        ],
+      }),
     });
   }
 
-  start(): void {
-    if (this.nameControl.invalid) {
+  onSubmit(): void {
+    if (this.form.invalid) {
       return;
     }
-    const state = startGame(this.nameControl.value, this.defaultDifficulty);
+    const playerName = this.form.controls.playerName.value;
+    const state = startGame(playerName, this.defaultDifficulty);
     this.repository.save(state);
     this.router.navigate(['/game']);
   }

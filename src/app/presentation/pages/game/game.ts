@@ -42,6 +42,7 @@ export class GamePageComponent implements OnDestroy {
   private moleInterval: ReturnType<typeof setInterval> | null = null;
   private moleTimeout: ReturnType<typeof setTimeout> | null = null;
   private moleCounter = 0;
+  private hasActiveHitEffect = signal<boolean>(false);
 
   constructor() {
     const loadedState = this.repository.load();
@@ -171,13 +172,23 @@ export class GamePageComponent implements OnDestroy {
         this.activeMoleIndexes.set(remainingIndexes);
 
         if (remainingIndexes.length === 0) {
+          this.hasActiveHitEffect.set(true);
+          setTimeout(() => {
+            this.hasActiveHitEffect.set(false);
+          }, GAME_CONFIG.hitEffectDurationMs);
+
           if (this.moleTimeout !== null) {
             clearTimeout(this.moleTimeout);
             this.moleTimeout = null;
           }
+
+          const delay = this.hasActiveHitEffect()
+            ? GAME_CONFIG.hitDelayMsWithEffect
+            : GAME_CONFIG.hitDelayMs;
+
           this.moleTimeout = setTimeout(() => {
             this.moveMole();
-          }, GAME_CONFIG.hitDelayMs);
+          }, delay);
         }
       }
     };
