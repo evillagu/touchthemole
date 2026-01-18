@@ -11,7 +11,11 @@ export class LocalStorageGameStateAdapter implements GameStateRepository {
     }
     try {
       const parsed = JSON.parse(raw) as GameState;
-      if (!parsed?.playerName || typeof parsed.points !== 'number' || !parsed.difficulty) {
+      if (
+        !parsed?.playerName ||
+        typeof parsed.points !== 'number' ||
+        !parsed.difficulty
+      ) {
         return null;
       }
       return parsed;
@@ -28,4 +32,3 @@ export class LocalStorageGameStateAdapter implements GameStateRepository {
     localStorage.removeItem(this.storageKey);
   }
 }
-

@@ -8,32 +8,46 @@
     </div>
     <div class="game__header-bottom">
       <label class="game__stat">
-        <span class="game__label" i18n="@@game.difficulty.label">Dificultad</span>
+        <span class="game__label" i18n="@@game.difficulty.label"
+          >Dificultad</span
+        >
         <select
           class="game__select"
           [value]="gameState().difficulty.id"
           (change)="onDifficultyChange($event)"
         >
           @for (difficulty of difficulties; track difficulty.id) {
-            <option [value]="difficulty.id">{{ difficulty.label }}</option>
+          <option [value]="difficulty.id">{{ difficulty.label }}</option>
           }
         </select>
       </label>
-      <button type="button" class="game__play" (click)="onRestart()" i18n="@@game.play.button">Play & Restart</button>
+      <button
+        type="button"
+        class="game__play"
+        (click)="onRestart()"
+        i18n="@@game.play.button"
+      >
+        Play & Restart
+      </button>
     </div>
   </header>
 
   @if (isGameStarted()) {
-    <app-game-board 
-      [holes]="holes" 
-      [onHit]="handleHit"
-      [activeMoleIndex]="activeMoleIndex()"
-    ></app-game-board>
+  <app-game-board
+    [holes]="holes"
+    [onHit]="handleHit"
+    [activeMoleIndex]="activeMoleIndex()"
+  ></app-game-board>
   }
 
   <div class="game__footer-bottom">
-    <button type="button" class="game__exit" (click)="onChangePlayer()" i18n="@@game.exit.button">Salir</button>
+    <button
+      type="button"
+      class="game__exit"
+      (click)="onChangePlayer()"
+      i18n="@@game.exit.button"
+    >
+      Salir
+    </button>
   </div>
 </section>
-
-

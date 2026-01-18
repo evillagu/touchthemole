@@ -48,7 +48,12 @@
   --color-gray-light: #3a3a4d;
   --color-gray-lighter: #1a1a2d;
 
-  --color-background-primary: linear-gradient(115deg, var(--color-primary-light), var(--color-primary-lighter), var(--color-primary-lightest));
+  --color-background-primary: linear-gradient(
+    115deg,
+    var(--color-primary-light),
+    var(--color-primary-lighter),
+    var(--color-primary-lightest)
+  );
   --color-background-hole: var(--color-gray-dark);
   --color-background-active: var(--color-gray-medium);
   --color-background-hit: var(--color-success-dark);

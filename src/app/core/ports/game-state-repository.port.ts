@@ -5,5 +5,3 @@ export interface GameStateRepository {
   save(state: GameState): void;
   clear(): void;
 }
-
-
