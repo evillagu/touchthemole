@@ -46,6 +46,7 @@
     font-size: var(--font-size-base);
     width: 100%;
     max-width: var(--max-width-button);
+    margin-top: 10px;
 
     &:disabled {
       opacity: var(--opacity-disabled);
