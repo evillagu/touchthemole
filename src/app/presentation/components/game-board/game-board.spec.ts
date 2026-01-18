@@ -26,37 +26,50 @@ describe('GameBoardComponent', () => {
   describe('handleHit', () => {
     const hitTestCases = [
       {
-        activeMoleIndex: 2,
+        activeMoleIndexes: [2],
         holeIndex: 2,
         shouldCall: true,
-        description: 'when activeMoleIndex matches holeIndex',
+        description: 'when holeIndex is in activeMoleIndexes',
       },
       {
-        activeMoleIndex: 2,
+        activeMoleIndexes: [2],
         holeIndex: 5,
         shouldCall: false,
-        description: 'when activeMoleIndex does not match holeIndex',
+        description: 'when holeIndex is not in activeMoleIndexes',
       },
       {
-        activeMoleIndex: null,
+        activeMoleIndexes: [],
         holeIndex: 2,
         shouldCall: false,
-        description: 'when activeMoleIndex is null',
+        description: 'when activeMoleIndexes is empty',
+      },
+      {
+        activeMoleIndexes: [1, 3],
+        holeIndex: 3,
+        shouldCall: true,
+        description: 'when holeIndex is in activeMoleIndexes with multiple moles',
+      },
+      {
+        activeMoleIndexes: [1, 3],
+        holeIndex: 5,
+        shouldCall: false,
+        description: 'when holeIndex is not in activeMoleIndexes with multiple moles',
       },
     ];
 
     describe('hit conditions', () => {
       hitTestCases.forEach(
-        ({ activeMoleIndex, holeIndex, shouldCall, description }) => {
+        ({ activeMoleIndexes, holeIndex, shouldCall, description }) => {
           it(`should ${shouldCall ? '' : 'not '}call onHit ${description}`, () => {
             const mockOnHit = jasmine.createSpy('onHit');
             fixture.componentRef.setInput('onHit', mockOnHit);
-            fixture.componentRef.setInput('activeMoleIndex', activeMoleIndex);
+            fixture.componentRef.setInput('activeMoleIndexes', activeMoleIndexes);
 
             component.handleHit(holeIndex);
 
             if (shouldCall) {
               expect(mockOnHit).toHaveBeenCalledTimes(1);
+              expect(mockOnHit).toHaveBeenCalledWith(holeIndex);
             } else {
               expect(mockOnHit).not.toHaveBeenCalled();
             }
@@ -67,7 +80,7 @@ describe('GameBoardComponent', () => {
 
     it('should handle undefined onHit gracefully', () => {
       fixture.componentRef.setInput('onHit', undefined);
-      fixture.componentRef.setInput('activeMoleIndex', 2);
+      fixture.componentRef.setInput('activeMoleIndexes', [2]);
 
       expect(() => component.handleHit(2)).not.toThrow();
     });
@@ -101,29 +114,35 @@ describe('GameBoardComponent', () => {
       const activeIndexTestCases = [
         {
           holes: [0, 1, 2],
-          activeMoleIndex: 1,
+          activeMoleIndexes: [1],
           expectedActive: [false, true, false],
-          description: 'when activeMoleIndex is 1',
+          description: 'when activeMoleIndexes contains 1',
         },
         {
           holes: [0, 1, 2],
-          activeMoleIndex: 0,
+          activeMoleIndexes: [0],
           expectedActive: [true, false, false],
-          description: 'when activeMoleIndex is 0',
+          description: 'when activeMoleIndexes contains 0',
         },
         {
           holes: [0, 1, 2],
-          activeMoleIndex: null,
+          activeMoleIndexes: [],
           expectedActive: [false, false, false],
-          description: 'when activeMoleIndex is null',
+          description: 'when activeMoleIndexes is empty',
+        },
+        {
+          holes: [0, 1, 2],
+          activeMoleIndexes: [0, 2],
+          expectedActive: [true, false, true],
+          description: 'when activeMoleIndexes contains multiple indices',
         },
       ];
 
       activeIndexTestCases.forEach(
-        ({ holes, activeMoleIndex, expectedActive, description }) => {
+        ({ holes, activeMoleIndexes, expectedActive, description }) => {
           it(`should pass correct isActive to each button ${description}`, () => {
             fixture.componentRef.setInput('holes', holes);
-            fixture.componentRef.setInput('activeMoleIndex', activeMoleIndex);
+            fixture.componentRef.setInput('activeMoleIndexes', activeMoleIndexes);
             fixture.detectChanges();
 
             const buttons =

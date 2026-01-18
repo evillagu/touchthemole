@@ -35,12 +35,13 @@ export class GamePageComponent implements OnDestroy {
     (_, index) => index
   );
   readonly gameState: WritableSignal<GameState>;
-  readonly handleHit: () => void;
+  readonly handleHit: (holeIndex: number) => void;
   readonly isGameStarted = signal<boolean>(false);
-  readonly activeMoleIndex = signal<number | null>(null);
+  readonly activeMoleIndexes = signal<number[]>([]);
 
   private moleInterval: ReturnType<typeof setInterval> | null = null;
   private moleTimeout: ReturnType<typeof setTimeout> | null = null;
+  private moleCounter = 0;
 
   constructor() {
     const loadedState = this.repository.load();
@@ -49,6 +50,7 @@ export class GamePageComponent implements OnDestroy {
         startGame(GAME_CONFIG.defaultPlayerName, this.difficulties[0])
     );
     this.isGameStarted.set(false);
+    this.moleCounter = 0;
     this.handleHit = this.initializeHandleHit();
     this.initializeDifficultyEffect();
   }
@@ -65,7 +67,8 @@ export class GamePageComponent implements OnDestroy {
     const current = this.gameState();
     this.updateState(startGame(current.playerName, current.difficulty));
     this.isGameStarted.set(true);
-    this.activeMoleIndex.set(null);
+    this.activeMoleIndexes.set([]);
+    this.moleCounter = 0;
     this.startMoleMovement();
   }
 
@@ -97,12 +100,22 @@ export class GamePageComponent implements OnDestroy {
       clearTimeout(this.moleTimeout);
       this.moleTimeout = null;
     }
-    this.activeMoleIndex.set(null);
+    this.activeMoleIndexes.set([]);
+    this.moleCounter = 0;
   }
 
   private moveMole(): void {
-    const randomIndex = Math.floor(Math.random() * this.holes.length);
-    this.activeMoleIndex.set(randomIndex);
+    this.moleCounter++;
+
+    let indexesToShow: number[];
+
+    if (this.moleCounter % 5 === 0) {
+      indexesToShow = this.getTwoRandomIndexes();
+    } else {
+      indexesToShow = [this.getRandomIndex()];
+    }
+
+    this.activeMoleIndexes.set(indexesToShow);
 
     if (this.moleTimeout !== null) {
       clearTimeout(this.moleTimeout);
@@ -112,28 +125,60 @@ export class GamePageComponent implements OnDestroy {
     const visibilityTime = Math.max(GAME_CONFIG.minVisibilityMs, interval);
 
     this.moleTimeout = setTimeout(() => {
-      if (this.activeMoleIndex() === randomIndex) {
-        this.activeMoleIndex.set(null);
+      const currentIndexes = this.activeMoleIndexes();
+      if (this.arraysEqual(currentIndexes, indexesToShow)) {
+        this.activeMoleIndexes.set([]);
       }
     }, visibilityTime);
+  }
+
+  private getRandomIndex(): number {
+    return Math.floor(Math.random() * this.holes.length);
+  }
+
+  private getTwoRandomIndexes(): number[] {
+    const firstIndex = this.getRandomIndex();
+    let secondIndex = this.getRandomIndex();
+
+    while (secondIndex === firstIndex) {
+      secondIndex = this.getRandomIndex();
+    }
+
+    return [firstIndex, secondIndex];
+  }
+
+  private arraysEqual(arr1: number[], arr2: number[]): boolean {
+    if (arr1.length !== arr2.length) return false;
+    const sorted1 = [...arr1].sort();
+    const sorted2 = [...arr2].sort();
+    return sorted1.every((val, index) => val === sorted2[index]);
   }
 
   private readonly router = inject(Router);
   private readonly repository = inject(GAME_STATE_REPOSITORY);
 
-  private initializeHandleHit(): () => void {
-    return (): void => {
-      if (this.activeMoleIndex() !== null) {
+  private initializeHandleHit(): (holeIndex: number) => void {
+    return (holeIndex: number): void => {
+      const currentIndexes = this.activeMoleIndexes();
+
+      if (currentIndexes.includes(holeIndex)) {
         const nextState = applyHit(this.gameState());
         this.updateState(nextState);
-        this.activeMoleIndex.set(null);
-        if (this.moleTimeout !== null) {
-          clearTimeout(this.moleTimeout);
-          this.moleTimeout = null;
+
+        const remainingIndexes = currentIndexes.filter(
+          (idx) => idx !== holeIndex
+        );
+        this.activeMoleIndexes.set(remainingIndexes);
+
+        if (remainingIndexes.length === 0) {
+          if (this.moleTimeout !== null) {
+            clearTimeout(this.moleTimeout);
+            this.moleTimeout = null;
+          }
+          this.moleTimeout = setTimeout(() => {
+            this.moveMole();
+          }, GAME_CONFIG.hitDelayMs);
         }
-        this.moleTimeout = setTimeout(() => {
-          this.moveMole();
-        }, GAME_CONFIG.hitDelayMs);
       }
     };
   }
