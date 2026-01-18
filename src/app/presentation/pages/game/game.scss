@@ -78,7 +78,9 @@
     width: 100%;
     max-width: var(--max-width-button-small);
     margin: 0 auto;
-    transition: background-color var(--transition-duration), border-color var(--transition-duration);
+    transition:
+      background-color var(--transition-duration),
+      border-color var(--transition-duration);
 
     &:hover {
       background: var(--color-background-button-hover);
@@ -90,5 +92,3 @@
     }
   }
 }
-
-

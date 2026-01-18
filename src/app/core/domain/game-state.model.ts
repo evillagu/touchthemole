@@ -5,5 +5,3 @@ export interface GameState {
   readonly points: number;
   readonly difficulty: Difficulty;
 }
-
-

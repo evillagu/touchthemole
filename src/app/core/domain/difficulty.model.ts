@@ -9,6 +9,5 @@ export interface Difficulty {
 export enum DifficultyId {
   Low = 'low',
   Medium = 'medium',
-  High = 'high'
+  High = 'high',
 }
-
