@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="es" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="app.title" datatype="html">
+        <source>Toca el Topo</source>
+        <target>Toca el Topo</target>
+      </trans-unit>
+      <trans-unit id="home.playerName.label" datatype="html">
+        <source>Nombre del jugador</source>
+        <target>Nombre del jugador</target>
+      </trans-unit>
+      <trans-unit id="home.playerName.placeholder" datatype="html">
+        <source>Tu nombre</source>
+        <target>Tu nombre</target>
+      </trans-unit>
+      <trans-unit id="home.start.button" datatype="html">
+        <source>Start</source>
+        <target>Iniciar</target>
+      </trans-unit>
+      <trans-unit id="game.difficulty.label" datatype="html">
+        <source>Dificultad</source>
+        <target>Dificultad</target>
+      </trans-unit>
+      <trans-unit id="game.play.button" datatype="html">
+        <source>Play</source>
+        <target>Jugar</target>
+      </trans-unit>
+      <trans-unit id="scoreboard.player.label" datatype="html">
+        <source>Jugador</source>
+        <target>Jugador</target>
+      </trans-unit>
+      <trans-unit id="scoreboard.points.label" datatype="html">
+        <source>Puntos</source>
+        <target>Puntos</target>
+      </trans-unit>
+      <trans-unit id="difficulty.low" datatype="html">
+        <source>Bajo</source>
+        <target>Bajo</target>
+      </trans-unit>
+      <trans-unit id="difficulty.medium" datatype="html">
+        <source>Medio</source>
+        <target>Medio</target>
+      </trans-unit>
+      <trans-unit id="difficulty.high" datatype="html">
+        <source>Alto</source>
+        <target>Alto</target>
+      </trans-unit>
+      <trans-unit id="game.defaultPlayerName" datatype="html">
+        <source>Jugador</source>
+        <target>Jugador</target>
+      </trans-unit>
+      <trans-unit id="game.exit.button" datatype="html">
+        <source>Salir</source>
+        <target>Salir</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

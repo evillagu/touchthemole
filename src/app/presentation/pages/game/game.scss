@@ -1,0 +1,94 @@
+.game {
+  min-height: 100vh;
+  display: grid;
+  gap: var(--spacing-large);
+  padding: var(--spacing-unit);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+
+  &__header {
+    display: grid;
+    gap: var(--spacing-unit);
+    grid-template-rows: auto auto;
+    background: var(--color-background-header);
+    padding: var(--spacing-small);
+    border-radius: var(--border-radius);
+    height: fit-content;
+    color: var(--color-text-primary);
+    margin-top: var(--spacing-medium);
+    box-shadow: var(--shadow-box);
+  }
+
+  &__header-top {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr));
+    gap: var(--spacing-unit);
+    margin: var(--spacing-tiny);
+
+    app-score-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100px, 100%), 1fr));
+      gap: var(--spacing-unit);
+    }
+  }
+
+  &__header-bottom {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+    gap: var(--spacing-unit);
+    align-items: end;
+    margin: var(--spacing-tiny);
+  }
+
+  &__footer-bottom {
+    text-align: center;
+  }
+
+  &__select {
+    padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
+    border-radius: var(--border-radius);
+    border: var(--border-width-thin) solid var(--color-border-default);
+    background: var(--color-white);
+    color: var(--color-text-on-white);
+    width: 100%;
+    font-size: var(--font-size-base);
+  }
+
+  &__play {
+    padding: clamp(0.625rem, 2vw, 0.875rem) clamp(1rem, 3vw, 1.5rem);
+    border: none;
+    border-radius: var(--border-radius-pill);
+    background: var(--color-background-button);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    width: 100%;
+  }
+
+  &__exit {
+    padding: clamp(0.625rem, 2vw, 0.875rem) clamp(1rem, 3vw, 1.5rem);
+    border: var(--border-width-thin) solid var(--color-border-button);
+    border-radius: var(--border-radius-pill);
+    background: var(--color-background-button);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    width: 100%;
+    max-width: var(--max-width-button-small);
+    margin: 0 auto;
+    transition:
+      background-color var(--transition-duration),
+      border-color var(--transition-duration);
+
+    &:hover {
+      background: var(--color-background-button-hover);
+      border-color: var(--color-border-hover);
+    }
+
+    &:active {
+      background: var(--color-background-button-active);
+    }
+  }
+}

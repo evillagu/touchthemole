@@ -1,0 +1,8 @@
+<div class="game-board__grid">
+  @for (hole of holes(); track hole) {
+  <app-mole-button
+    [isActive]="activeMoleIndexes().includes(hole)"
+    (hit)="handleHit(hole)"
+  ></app-mole-button>
+  }
+</div>

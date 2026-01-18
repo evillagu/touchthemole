@@ -1,0 +1,16 @@
+<button
+  type="button"
+  class="mole-button"
+  [class.mole-button--active]="isActive()"
+  [class.mole-button--hit]="isHit()"
+  (click)="onHit()"
+>
+  @if (isActive() || isHit()) {
+  <img
+    src="icons/topo.svg"
+    alt="Topo"
+    class="mole-button__image"
+    [class.mole-button__image--hit]="isHit()"
+  />
+  }
+</button>

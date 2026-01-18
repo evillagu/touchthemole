@@ -1,0 +1,9 @@
+.game-board {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+    gap: var(--spacing-small);
+    max-width: var(--max-width-container-large);
+    margin: 0 auto;
+  }
+}

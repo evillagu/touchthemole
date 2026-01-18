@@ -1,0 +1,27 @@
+<section class="home">
+  <div class="home__container">
+    <h1 class="home__title" i18n="@@app.title">Toca el Topo</h1>
+    <form class="home__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <label class="home__field">
+        <span class="home__label" i18n="@@home.playerName.label"
+          >Nombre del jugador</span
+        >
+        <input
+          type="text"
+          class="home__input"
+          formControlName="playerName"
+          i18n-placeholder="@@home.playerName.placeholder"
+          placeholder="Tu nombre"
+        />
+      </label>
+      <button
+        type="submit"
+        class="home__button"
+        [disabled]="form.invalid"
+        i18n="@@home.start.button"
+      >
+        Start
+      </button>
+    </form>
+  </div>
+</section>
