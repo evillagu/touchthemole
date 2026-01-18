@@ -81,19 +81,19 @@ describe('GamePageComponent', () => {
       expect(component.isGameStarted()).toBe(false);
     });
 
-    it('should initialize with activeMoleIndex as null', () => {
-      expect(component.activeMoleIndex()).toBe(null);
+    it('should initialize with activeMoleIndexes as empty array', () => {
+      expect(component.activeMoleIndexes()).toEqual([]);
     });
   });
 
   describe('handleHit', () => {
-    it('should apply hit and update points when activeMoleIndex is not null', fakeAsync(() => {
+    it('should apply hit and update points when holeIndex is in activeMoleIndexes', fakeAsync(() => {
       const initialPoints = component.gameState().points;
       const difficultyPoints = component.gameState().difficulty.points;
-      component.activeMoleIndex.set(5);
+      component.activeMoleIndexes.set([5]);
       fixture.detectChanges();
 
-      component.handleHit();
+      component.handleHit(5);
       tick();
 
       expect(component.gameState().points).toBe(
@@ -102,32 +102,40 @@ describe('GamePageComponent', () => {
       expect(mockRepository.save).toHaveBeenCalled();
     }));
 
-    it('should not apply hit when activeMoleIndex is null', () => {
+    it('should not apply hit when holeIndex is not in activeMoleIndexes', () => {
       const initialPoints = component.gameState().points;
-      component.activeMoleIndex.set(null);
+      component.activeMoleIndexes.set([]);
 
-      component.handleHit();
+      component.handleHit(5);
 
       expect(component.gameState().points).toBe(initialPoints);
     });
 
-    it('should reset activeMoleIndex after hit', fakeAsync(() => {
-      component.activeMoleIndex.set(5);
-      component.handleHit();
+    it('should remove hit mole from activeMoleIndexes after hit', fakeAsync(() => {
+      component.activeMoleIndexes.set([5]);
+      component.handleHit(5);
       tick();
 
-      expect(component.activeMoleIndex()).toBe(null);
+      expect(component.activeMoleIndexes()).toEqual([]);
     }));
 
-    it('should move mole after hit delay', fakeAsync(() => {
-      component.activeMoleIndex.set(5);
-      component.handleHit();
+    it('should keep other moles active when hitting one of multiple', fakeAsync(() => {
+      component.activeMoleIndexes.set([3, 5]);
+      component.handleHit(5);
+      tick();
 
-      expect(component.activeMoleIndex()).toBe(null);
+      expect(component.activeMoleIndexes()).toEqual([3]);
+    }));
+
+    it('should move mole after hit delay when no moles remain', fakeAsync(() => {
+      component.activeMoleIndexes.set([5]);
+      component.handleHit(5);
+
+      expect(component.activeMoleIndexes()).toEqual([]);
 
       tick(500);
 
-      expect(component.activeMoleIndex()).not.toBe(null);
+      expect(component.activeMoleIndexes().length).toBeGreaterThan(0);
     }));
   });
 
@@ -172,9 +180,9 @@ describe('GamePageComponent', () => {
 
       expect(component.gameState().points).toBe(0);
       expect(component.isGameStarted()).toBe(true);
-      expect(component.activeMoleIndex()).not.toBe(null);
-      expect(component.activeMoleIndex()).toBeGreaterThanOrEqual(0);
-      expect(component.activeMoleIndex()).toBeLessThan(component.holes.length);
+      expect(component.activeMoleIndexes().length).toBeGreaterThan(0);
+      expect(component.activeMoleIndexes()[0]).toBeGreaterThanOrEqual(0);
+      expect(component.activeMoleIndexes()[0]).toBeLessThan(component.holes.length);
       expect(mockRepository.save).toHaveBeenCalled();
     });
 
@@ -182,16 +190,16 @@ describe('GamePageComponent', () => {
       component.onRestart();
       tick(100);
 
-      expect(component.activeMoleIndex()).not.toBe(null);
+      expect(component.activeMoleIndexes().length).toBeGreaterThan(0);
     }));
   });
 
   describe('onChangePlayer', () => {
     it('should stop mole movement', () => {
-      component.activeMoleIndex.set(5);
+      component.activeMoleIndexes.set([5]);
       component.onChangePlayer();
 
-      expect(component.activeMoleIndex()).toBe(null);
+      expect(component.activeMoleIndexes()).toEqual([]);
     });
 
     it('should clear repository', () => {
@@ -209,10 +217,10 @@ describe('GamePageComponent', () => {
 
   describe('ngOnDestroy', () => {
     it('should stop mole movement on destroy', () => {
-      component.activeMoleIndex.set(5);
+      component.activeMoleIndexes.set([5]);
       component.ngOnDestroy();
 
-      expect(component.activeMoleIndex()).toBe(null);
+      expect(component.activeMoleIndexes()).toEqual([]);
     });
   });
 
@@ -223,10 +231,10 @@ describe('GamePageComponent', () => {
 
       tick(1000);
 
-      const newIndex = component.activeMoleIndex();
-      expect(newIndex).not.toBe(null);
-      expect(newIndex).toBeGreaterThanOrEqual(0);
-      expect(newIndex).toBeLessThan(component.holes.length);
+      const indexes = component.activeMoleIndexes();
+      expect(indexes.length).toBeGreaterThan(0);
+      expect(indexes[0]).toBeGreaterThanOrEqual(0);
+      expect(indexes[0]).toBeLessThan(component.holes.length);
     }));
 
     const difficultyIntervals = [
@@ -245,22 +253,24 @@ describe('GamePageComponent', () => {
         fixture.detectChanges();
 
         tick(100);
-        const initialIndex = component.activeMoleIndex();
-        expect(initialIndex).not.toBe(null);
+        const initialIndexes = component.activeMoleIndexes();
+        expect(initialIndexes.length).toBeGreaterThan(0);
+        const initialIndex = initialIndexes[0];
         expect(initialIndex).toBeGreaterThanOrEqual(0);
         expect(initialIndex).toBeLessThan(component.holes.length);
 
-        const indices: (number | null)[] = [initialIndex];
+        const indices: number[] = [initialIndex];
         for (let i = 0; i < 3; i++) {
           tick(expectedInterval);
-          const currentIndex = component.activeMoleIndex();
+          const currentIndexes = component.activeMoleIndexes();
+          expect(currentIndexes.length).toBeGreaterThan(0);
+          const currentIndex = currentIndexes[0];
           indices.push(currentIndex);
-          expect(currentIndex).not.toBe(null);
           expect(currentIndex).toBeGreaterThanOrEqual(0);
           expect(currentIndex).toBeLessThan(component.holes.length);
         }
 
-        const uniqueIndices = new Set(indices.filter((idx) => idx !== null));
+        const uniqueIndices = new Set(indices);
         expect(uniqueIndices.size).toBeGreaterThan(1);
       }));
     });
