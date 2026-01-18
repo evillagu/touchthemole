@@ -90,20 +90,6 @@ ng serve
 
 Una vez que el servidor esté en ejecución, abre tu navegador y navega a `http://localhost:4200/`. La aplicación se recargará automáticamente siempre que modifiques alguno de los archivos fuente.
 
-## Generación de código
-
-Angular CLI incluye potentes herramientas de generación de código. Para generar un nuevo componente, ejecuta:
-
-```bash
-ng generate component component-name
-```
-
-Para obtener una lista completa de esquemas disponibles (como `components`, `directives` o `pipes`), ejecuta:
-
-```bash
-ng generate --help
-```
-
 ## Compilación
 
 Para compilar el proyecto, ejecuta:
@@ -121,17 +107,6 @@ Para ejecutar pruebas unitarias con el ejecutor de pruebas [Karma](https://karma
 ```bash
 ng test
 ```
-
-## Ejecutar pruebas end-to-end
-
-Para pruebas end-to-end (e2e), ejecuta:
-
-```bash
-ng e2e
-```
-
-Angular CLI no incluye un framework de pruebas end-to-end por defecto. Puedes elegir uno que se adapte a tus necesidades.
-
 ## Recursos adicionales
 
 Para obtener más información sobre el uso de Angular CLI, incluyendo referencias detalladas de comandos, visita la página [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).
