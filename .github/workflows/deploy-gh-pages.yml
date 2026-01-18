@@ -58,7 +58,7 @@ jobs:
           else
             BASE_HREF="/$REPO_NAME/"
           fi
-          cat > dist/touch-the-mole/404.html << EOF
+          cat > dist/touch-the-mole/browser/404.html << EOF
           <!DOCTYPE html>
           <html lang="es">
           <head>
@@ -74,13 +74,16 @@ jobs:
           </html>
           EOF
 
+      - name: Create .nojekyll
+        run: touch dist/touch-the-mole/browser/.nojekyll
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist/touch-the-mole'
+          path: './dist/touch-the-mole/browser'
 
   deploy:
     environment:
