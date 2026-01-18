@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { GamePageComponent } from './game';
 import { GameStateRepository } from '../../../core/ports/game-state-repository.port';
@@ -9,31 +14,40 @@ import { startGame } from '../../../application/use-cases/start-game.use-case';
 import { GameBoardComponent } from '../../components/game-board/game-board';
 import { ScoreBoardComponent } from '../../components/score-board/score-board';
 
+const createMockGameState = (playerName: string, points = 0): GameState => {
+  const difficulties = listDifficulties();
+  const state = startGame(playerName, difficulties[0]);
+  return { ...state, points };
+};
+
 describe('GamePageComponent', () => {
   let component: GamePageComponent;
   let fixture: ComponentFixture<GamePageComponent>;
   let mockRepository: jasmine.SpyObj<GameStateRepository>;
   let mockRouter: jasmine.SpyObj<Router>;
 
-  const createMockGameState = (playerName: string, points: number = 0): GameState => {
-    const difficulties = listDifficulties();
-    return startGame(playerName, difficulties[0]);
-  };
-
-  beforeEach(async () => {
-    mockRepository = jasmine.createSpyObj('GameStateRepository', ['load', 'save', 'clear']);
+  const setupTestBed = async (): Promise<void> => {
+    mockRepository = jasmine.createSpyObj('GameStateRepository', [
+      'load',
+      'save',
+      'clear',
+    ]);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
       imports: [GamePageComponent, GameBoardComponent, ScoreBoardComponent],
       providers: [
         { provide: GAME_STATE_REPOSITORY, useValue: mockRepository },
-        { provide: Router, useValue: mockRouter }
-      ]
+        { provide: Router, useValue: mockRouter },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(GamePageComponent);
     component = fixture.componentInstance;
+  };
+
+  beforeEach(async () => {
+    await setupTestBed();
   });
 
   it('should create', () => {
@@ -82,7 +96,9 @@ describe('GamePageComponent', () => {
       component.handleHit();
       tick();
 
-      expect(component.gameState().points).toBe(initialPoints + difficultyPoints);
+      expect(component.gameState().points).toBe(
+        initialPoints + difficultyPoints
+      );
       expect(mockRepository.save).toHaveBeenCalled();
     }));
 
@@ -119,13 +135,13 @@ describe('GamePageComponent', () => {
     const difficultyTestCases = [
       { difficultyId: 'low', description: 'low difficulty' },
       { difficultyId: 'medium', description: 'medium difficulty' },
-      { difficultyId: 'high', description: 'high difficulty' }
+      { difficultyId: 'high', description: 'high difficulty' },
     ];
 
     difficultyTestCases.forEach(({ difficultyId, description }) => {
       it(`should change difficulty to ${description}`, () => {
         const event = {
-          target: { value: difficultyId }
+          target: { value: difficultyId },
         } as unknown as Event;
 
         component.onDifficultyChange(event);
@@ -137,7 +153,7 @@ describe('GamePageComponent', () => {
 
     it('should use default difficulty if event target is null', () => {
       const event = {
-        target: null
+        target: null,
       } as unknown as Event;
 
       const initialDifficulty = component.gameState().difficulty.id;
@@ -156,7 +172,9 @@ describe('GamePageComponent', () => {
 
       expect(component.gameState().points).toBe(0);
       expect(component.isGameStarted()).toBe(true);
-      expect(component.activeMoleIndex()).toBe(null);
+      expect(component.activeMoleIndex()).not.toBe(null);
+      expect(component.activeMoleIndex()).toBeGreaterThanOrEqual(0);
+      expect(component.activeMoleIndex()).toBeLessThan(component.holes.length);
       expect(mockRepository.save).toHaveBeenCalled();
     });
 
@@ -214,23 +232,36 @@ describe('GamePageComponent', () => {
     const difficultyIntervals = [
       { difficultyId: 'low', expectedInterval: 1000 },
       { difficultyId: 'medium', expectedInterval: 750 },
-      { difficultyId: 'high', expectedInterval: 500 }
+      { difficultyId: 'high', expectedInterval: 500 },
     ];
 
     difficultyIntervals.forEach(({ difficultyId, expectedInterval }) => {
       it(`should use correct interval for ${difficultyId} difficulty`, fakeAsync(() => {
         const event = {
-          target: { value: difficultyId }
+          target: { value: difficultyId },
         } as unknown as Event;
         component.onDifficultyChange(event);
         component.isGameStarted.set(true);
         fixture.detectChanges();
 
+        tick(100);
         const initialIndex = component.activeMoleIndex();
-        tick(expectedInterval);
+        expect(initialIndex).not.toBe(null);
+        expect(initialIndex).toBeGreaterThanOrEqual(0);
+        expect(initialIndex).toBeLessThan(component.holes.length);
 
-        const newIndex = component.activeMoleIndex();
-        expect(newIndex).not.toBe(initialIndex);
+        const indices: (number | null)[] = [initialIndex];
+        for (let i = 0; i < 3; i++) {
+          tick(expectedInterval);
+          const currentIndex = component.activeMoleIndex();
+          indices.push(currentIndex);
+          expect(currentIndex).not.toBe(null);
+          expect(currentIndex).toBeGreaterThanOrEqual(0);
+          expect(currentIndex).toBeLessThan(component.holes.length);
+        }
+
+        const uniqueIndices = new Set(indices.filter((idx) => idx !== null));
+        expect(uniqueIndices.size).toBeGreaterThan(1);
       }));
     });
   });

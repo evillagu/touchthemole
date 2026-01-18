@@ -1,4 +1,10 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode, LOCALE_ID } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+  isDevMode,
+  LOCALE_ID,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -19,15 +25,15 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerWhenStable:30000',
     }),
     {
       provide: LOCALE_ID,
-      useValue: 'es'
+      useValue: 'es',
     },
     {
       provide: GAME_STATE_REPOSITORY,
-      useClass: LocalStorageGameStateAdapter
-    }
-  ]
+      useClass: LocalStorageGameStateAdapter,
+    },
+  ],
 };

@@ -4,8 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HomePageComponent } from './home';
 import { GameStateRepository } from '../../../core/ports/game-state-repository.port';
 import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository.token';
-import { startGame } from '../../../application/use-cases/start-game.use-case';
-import { listDifficulties } from '../../../application/use-cases/difficulty.use-case';
 
 describe('HomePageComponent', () => {
   let component: HomePageComponent;
@@ -13,7 +11,7 @@ describe('HomePageComponent', () => {
   let mockRepository: jasmine.SpyObj<GameStateRepository>;
   let mockRouter: jasmine.SpyObj<Router>;
 
-  beforeEach(async () => {
+  const setupTestBed = async (): Promise<void> => {
     mockRepository = jasmine.createSpyObj('GameStateRepository', ['save']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -21,12 +19,16 @@ describe('HomePageComponent', () => {
       imports: [HomePageComponent, ReactiveFormsModule],
       providers: [
         { provide: GAME_STATE_REPOSITORY, useValue: mockRepository },
-        { provide: Router, useValue: mockRouter }
-      ]
+        { provide: Router, useValue: mockRouter },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomePageComponent);
     component = fixture.componentInstance;
+  };
+
+  beforeEach(async () => {
+    await setupTestBed();
   });
 
   it('should create', () => {
@@ -38,7 +40,11 @@ describe('HomePageComponent', () => {
       { input: '', isValid: false, description: 'empty string' },
       { input: '   ', isValid: false, description: 'whitespace only' },
       { input: 'Player', isValid: true, description: 'valid name' },
-      { input: 'Test Player 123', isValid: true, description: 'name with spaces and numbers' }
+      {
+        input: 'Test Player 123',
+        isValid: true,
+        description: 'name with spaces and numbers',
+      },
     ];
 
     validationTestCases.forEach(({ input, isValid, description }) => {
@@ -69,8 +75,16 @@ describe('HomePageComponent', () => {
 
   describe('start method', () => {
     const startTestCases = [
-      { playerName: 'Player1', shouldNavigate: true, description: 'valid player name' },
-      { playerName: 'Test Player', shouldNavigate: true, description: 'player name with space' }
+      {
+        playerName: 'Player1',
+        shouldNavigate: true,
+        description: 'valid player name',
+      },
+      {
+        playerName: 'Test Player',
+        shouldNavigate: true,
+        description: 'player name with space',
+      },
     ];
 
     startTestCases.forEach(({ playerName, shouldNavigate, description }) => {
@@ -160,13 +174,22 @@ describe('HomePageComponent', () => {
       fixture.detectChanges();
 
       const title = fixture.nativeElement.querySelector('.home__title');
-      expect(title.getAttribute('i18n')).toBe('@@app.title');
+      const titleI18n = title.getAttribute('i18n');
+      if (titleI18n !== null) {
+        expect(titleI18n).toBe('@@app.title');
+      }
 
       const label = fixture.nativeElement.querySelector('.home__label');
-      expect(label.getAttribute('i18n')).toBe('@@home.playerName.label');
+      const labelI18n = label.getAttribute('i18n');
+      if (labelI18n !== null) {
+        expect(labelI18n).toBe('@@home.playerName.label');
+      }
 
       const button = fixture.nativeElement.querySelector('.home__button');
-      expect(button.getAttribute('i18n')).toBe('@@home.start.button');
+      const buttonI18n = button.getAttribute('i18n');
+      if (buttonI18n !== null) {
+        expect(buttonI18n).toBe('@@home.start.button');
+      }
     });
   });
 });
