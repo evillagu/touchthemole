@@ -11,6 +11,8 @@ Este documento describe la configuración completa de Progressive Web App (PWA) 
 - **Configuración de App**: `src/app/app.config.ts`
 - **HTML Principal**: `src/index.html`
 - **Build Config**: `angular.json`
+- **GitHub Actions Workflow**: `.github/workflows/deploy-gh-pages.yml`
+- **404.html**: `public/404.html`
 
 ---
 
@@ -510,3 +512,377 @@ La PWA permite:
 - Funcionamiento offline completo
 - Carga rápida de recursos cacheados
 - Actualizaciones automáticas en segundo plano
+
+---
+
+## 13. Despliegue en GitHub Pages
+
+### Objetivo
+
+Esta sección describe la configuración completa para desplegar la aplicación PWA en GitHub Pages, incluyendo GitHub Actions workflow, manejo de routing de SPA, y configuración de base href dinámico.
+
+### Archivos de Configuración
+
+- **GitHub Actions Workflow**: `.github/workflows/deploy-gh-pages.yml`
+- **404.html**: `public/404.html` (para manejo de routing)
+- **Script de Build**: `package.json` (script `build:gh-pages`)
+
+---
+
+### 13.1. GitHub Actions Workflow
+
+#### Archivo: `.github/workflows/deploy-gh-pages.yml`
+
+El workflow automatiza el proceso de build y deploy a GitHub Pages.
+
+#### Estructura del Workflow
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+```
+
+#### Triggers
+
+- **Push a `main` o `master`**: Despliega automáticamente cuando se hace push
+- **`workflow_dispatch`**: Permite ejecutar manualmente desde GitHub Actions
+
+#### Permisos
+
+- **`contents: read`**: Leer el repositorio
+- **`pages: write`**: Escribir en GitHub Pages
+- **`id-token: write`**: Autenticación para GitHub Pages
+
+#### Jobs
+
+##### Job: `build`
+
+1. **Checkout del código**
+2. **Setup de Node.js** (versión 20 con cache de npm)
+3. **Instalación de dependencias** (`npm ci`)
+4. **Obtención del nombre del repositorio**
+   - Detecta si es un repositorio de usuario (`username.github.io`) o proyecto
+   - Calcula el base href apropiado
+5. **Build con base href dinámico**
+   - Si es `username.github.io`: base href = `/`
+   - Si es proyecto: base href = `/repo-name/`
+6. **Creación de 404.html dinámico**
+   - Genera 404.html con el base href correcto
+   - Redirige todas las rutas a `index.html` para que Angular maneje el routing
+7. **Upload del artifact** para GitHub Pages
+
+##### Job: `deploy`
+
+1. **Deploy a GitHub Pages** usando el artifact generado
+
+#### Base Href Dinámico
+
+El workflow detecta automáticamente el tipo de repositorio:
+
+```yaml
+REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+if [ "$REPO_NAME" = "${{ github.repository_owner }}.github.io" ]; then
+  BASE_HREF="/"
+else
+  BASE_HREF="/$REPO_NAME/"
+fi
+```
+
+**Ejemplos**:
+- Repositorio: `username/touch-the-mole` → Base href: `/touch-the-mole/`
+- Repositorio: `username/username.github.io` → Base href: `/`
+
+---
+
+### 13.2. Archivo 404.html
+
+#### Archivo: `public/404.html`
+
+GitHub Pages no soporta routing de SPA nativamente. Cuando un usuario accede directamente a una ruta como `/game`, GitHub Pages busca `/game/index.html`, que no existe.
+
+#### Solución
+
+El archivo `404.html` redirige todas las rutas a `index.html`, permitiendo que Angular Router maneje el routing.
+
+#### Contenido
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Toca el Topo</title>
+  <base href="/">
+  <script>
+    sessionStorage.redirect = location.href;
+  </script>
+  <meta http-equiv="refresh" content="0;URL='/index.html'">
+</head>
+<body></body>
+</html>
+```
+
+#### Funcionamiento
+
+1. **Usuario accede a `/game`** directamente
+2. **GitHub Pages no encuentra `/game/index.html`**
+3. **GitHub Pages sirve `404.html`**
+4. **`404.html` redirige a `/index.html`** con el base href correcto
+5. **Angular Router maneja la ruta `/game`** correctamente
+
+#### Nota
+
+El workflow de GitHub Actions genera un `404.html` dinámico en el build con el base href correcto según el repositorio.
+
+---
+
+### 13.3. Scripts de Build
+
+#### Archivo: `package.json`
+
+Se agregó el script `build:gh-pages`:
+
+```json
+{
+  "scripts": {
+    "build:gh-pages": "ng build --configuration=production"
+  }
+}
+```
+
+#### Uso
+
+El workflow de GitHub Actions usa este script:
+
+```bash
+npm run build:gh-pages -- --base-href="$BASE_HREF"
+```
+
+El flag `--base-href` se pasa dinámicamente según el tipo de repositorio.
+
+---
+
+### 13.4. Configuración en GitHub
+
+#### Habilitar GitHub Pages
+
+1. Ir a **Settings** → **Pages** en el repositorio
+2. En **Source**, seleccionar:
+   - **GitHub Actions** (recomendado)
+   - O **Deploy from a branch** → `gh-pages` branch
+
+#### Con GitHub Actions (Recomendado)
+
+- El workflow se ejecuta automáticamente
+- No se necesita rama `gh-pages`
+- El deploy es más rápido y confiable
+
+#### Con Branch `gh-pages`
+
+1. El workflow crea/actualiza la rama `gh-pages`
+2. En Settings → Pages, seleccionar branch `gh-pages`
+3. La aplicación estará disponible en `https://username.github.io/repo-name/`
+
+---
+
+### 13.5. URLs de la Aplicación
+
+#### Repositorio de Proyecto
+
+Si el repositorio es `username/touch-the-mole`:
+- **URL**: `https://username.github.io/touch-the-mole/`
+- **Base href**: `/touch-the-mole/`
+- **Rutas**: 
+  - `https://username.github.io/touch-the-mole/home`
+  - `https://username.github.io/touch-the-mole/game`
+
+#### Repositorio de Usuario
+
+Si el repositorio es `username/username.github.io`:
+- **URL**: `https://username.github.io/`
+- **Base href**: `/`
+- **Rutas**:
+  - `https://username.github.io/home`
+  - `https://username.github.io/game`
+
+---
+
+### 13.6. Flujo de Despliegue
+
+#### Automático (Push a main/master)
+
+1. **Desarrollador hace push** a la rama `main` o `master`
+2. **GitHub Actions se activa** automáticamente
+3. **Workflow ejecuta build**:
+   - Instala dependencias
+   - Detecta tipo de repositorio
+   - Calcula base href
+   - Hace build con base href correcto
+   - Genera 404.html dinámico
+4. **Workflow despliega** a GitHub Pages
+5. **Aplicación disponible** en unos minutos
+
+#### Manual (workflow_dispatch)
+
+1. Ir a **Actions** → **Deploy to GitHub Pages**
+2. Click en **Run workflow**
+3. Seleccionar rama y ejecutar
+4. El proceso es el mismo que el automático
+
+---
+
+### 13.7. Service Worker en GitHub Pages
+
+#### Compatibilidad
+
+El Service Worker funciona correctamente en GitHub Pages porque:
+- GitHub Pages proporciona HTTPS automáticamente
+- El base href se configura correctamente
+- Las rutas relativas funcionan correctamente
+
+#### Verificación
+
+1. Desplegar la aplicación
+2. Abrir DevTools → Application
+3. Verificar que `ngsw-worker.js` está activo
+4. Verificar que el cache se está poblando
+
+---
+
+### 13.8. Troubleshooting GitHub Pages
+
+#### La aplicación muestra 404 en rutas directas
+
+**Causa**: El archivo `404.html` no se generó correctamente o no está en la raíz.
+
+**Solución**:
+1. Verificar que el workflow genera `404.html` en el build
+2. Verificar que `404.html` está en la raíz del artifact
+3. Verificar que GitHub Pages está configurado correctamente
+
+#### Los assets no cargan
+
+**Causa**: Base href incorrecto.
+
+**Solución**:
+1. Verificar el base href en el build
+2. Verificar que el workflow calcula correctamente el base href
+3. Verificar que el manifest y Service Worker usan rutas relativas
+
+#### El Service Worker no funciona
+
+**Causa**: HTTPS no está habilitado o base href incorrecto.
+
+**Solución**:
+1. GitHub Pages proporciona HTTPS automáticamente
+2. Verificar que el base href es correcto
+3. Verificar que `ngsw-worker.js` se genera en el build
+
+#### El workflow falla
+
+**Causa**: Permisos incorrectos o error en el build.
+
+**Solución**:
+1. Verificar permisos en el workflow (`pages: write`, `id-token: write`)
+2. Verificar que `npm ci` instala correctamente
+3. Verificar logs del workflow en GitHub Actions
+
+---
+
+### 13.9. Comandos Útiles
+
+#### Build Local para GitHub Pages
+
+```bash
+# Build con base href para proyecto
+ng build --configuration=production --base-href="/touch-the-mole/"
+
+# Build con base href para repositorio de usuario
+ng build --configuration=production --base-href="/"
+```
+
+#### Verificar Build Localmente
+
+```bash
+# Instalar servidor HTTP
+npm install -g http-server
+
+# Servir build
+cd dist/touch-the-mole
+http-server -p 8080
+```
+
+#### Testing de 404.html
+
+1. Hacer build con base href correcto
+2. Copiar `index.html` a `404.html` en `dist/`
+3. Servir con `http-server`
+4. Acceder directamente a `/game` y verificar redirección
+
+---
+
+### 13.10. Checklist de Despliegue
+
+#### Configuración Inicial
+
+- [x] GitHub Actions workflow creado
+- [x] Archivo 404.html creado
+- [x] Script build:gh-pages agregado
+- [ ] GitHub Pages habilitado en Settings
+- [ ] Permisos del workflow verificados
+
+#### Primera Deploy
+
+- [ ] Push a main/master ejecutado
+- [ ] Workflow completado exitosamente
+- [ ] Aplicación accesible en GitHub Pages
+- [ ] Rutas funcionan correctamente
+- [ ] Service Worker activo
+- [ ] PWA instalable
+
+#### Verificación Post-Deploy
+
+- [ ] Aplicación carga correctamente
+- [ ] Rutas directas funcionan (ej: `/game`)
+- [ ] Assets cargan correctamente
+- [ ] Service Worker cachea recursos
+- [ ] Aplicación funciona offline
+- [ ] Manifest detectado correctamente
+
+---
+
+### 13.11. Referencias GitHub Pages
+
+- [GitHub Pages Documentation](https://docs.github.com/en/pages)
+- [GitHub Actions for Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow)
+- [Custom 404 Page](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-custom-404-page-for-your-github-pages-site)
+- [Angular Deployment](https://angular.dev/guide/deployment)
+
+---
+
+### 13.12. Resumen de GitHub Pages
+
+La aplicación está completamente configurada para desplegarse en GitHub Pages con:
+
+1. **GitHub Actions workflow** que automatiza build y deploy
+2. **Base href dinámico** que se ajusta según el tipo de repositorio
+3. **404.html** que maneja el routing de SPA
+4. **Service Worker compatible** con GitHub Pages
+5. **Deploy automático** en cada push a main/master
+
+La configuración permite:
+- Deploy automático sin intervención manual
+- Funcionamiento correcto de rutas de Angular
+- Service Worker y PWA funcionando en GitHub Pages
+- Soporte para repositorios de proyecto y usuario
