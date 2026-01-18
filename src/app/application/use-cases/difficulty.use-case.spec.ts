@@ -1,4 +1,8 @@
-import { listDifficulties, resolveDifficulty, GAME_CONFIG } from './difficulty.use-case';
+import {
+  listDifficulties,
+  resolveDifficulty,
+  GAME_CONFIG,
+} from './difficulty.use-case';
 import { Difficulty, DifficultyId } from '../../core/domain/difficulty.model';
 
 describe('difficulty use cases', () => {
@@ -21,20 +25,22 @@ describe('difficulty use cases', () => {
       });
     });
 
-    const expectedDifficulties = [
-      { id: DifficultyId.Low, intervalMs: 1000, points: 10 },
-      { id: DifficultyId.Medium, intervalMs: 750, points: 20 },
-      { id: DifficultyId.High, intervalMs: 500, points: 30 }
-    ];
+    describe('difficulty values', () => {
+      const expectedDifficulties = [
+        { id: DifficultyId.Low, intervalMs: 1000, points: 10 },
+        { id: DifficultyId.Medium, intervalMs: 750, points: 20 },
+        { id: DifficultyId.High, intervalMs: 500, points: 30 },
+      ];
 
-    expectedDifficulties.forEach((expected, index) => {
-      it(`should have correct values for ${expected.id} difficulty`, () => {
-        const difficulties = listDifficulties();
-        const difficulty = difficulties[index];
+      expectedDifficulties.forEach((expected, index) => {
+        it(`should have correct values for ${expected.id} difficulty`, () => {
+          const difficulties = listDifficulties();
+          const difficulty = difficulties[index];
 
-        expect(difficulty.id).toBe(expected.id);
-        expect(difficulty.intervalMs).toBe(expected.intervalMs);
-        expect(difficulty.points).toBe(expected.points);
+          expect(difficulty.id).toBe(expected.id);
+          expect(difficulty.intervalMs).toBe(expected.intervalMs);
+          expect(difficulty.points).toBe(expected.points);
+        });
       });
     });
 
@@ -51,43 +57,49 @@ describe('difficulty use cases', () => {
     const resolveTestCases = [
       { id: DifficultyId.Low, description: 'low difficulty id' },
       { id: DifficultyId.Medium, description: 'medium difficulty id' },
-      { id: DifficultyId.High, description: 'high difficulty id' }
+      { id: DifficultyId.High, description: 'high difficulty id' },
     ];
 
-    resolveTestCases.forEach(({ id, description }) => {
-      it(`should resolve ${description}`, () => {
-        const result = resolveDifficulty(id);
+    describe('valid ids', () => {
+      resolveTestCases.forEach(({ id, description }) => {
+        it(`should resolve ${description}`, () => {
+          const result = resolveDifficulty(id);
 
-        expect(result.id).toBe(id);
+          expect(result.id).toBe(id);
+        });
       });
     });
 
-    it('should return default difficulty for unknown id', () => {
-      const result = resolveDifficulty('unknown-id');
-      const defaultDifficulty = listDifficulties()[0];
-
-      expect(result.id).toBe(defaultDifficulty.id);
-    });
-
-    it('should return default difficulty for empty string', () => {
-      const result = resolveDifficulty('');
-      const defaultDifficulty = listDifficulties()[0];
-
-      expect(result.id).toBe(defaultDifficulty.id);
-    });
-
-    const invalidIdTestCases = [
-      { id: 'invalid', description: 'invalid id' },
-      { id: 'unknown', description: 'unknown id' },
-      { id: '123', description: 'numeric string' }
-    ];
-
-    invalidIdTestCases.forEach(({ id, description }) => {
-      it(`should return default difficulty for ${description}`, () => {
-        const result = resolveDifficulty(id);
+    describe('invalid ids', () => {
+      it('should return default difficulty for unknown id', () => {
+        const result = resolveDifficulty('unknown-id');
         const defaultDifficulty = listDifficulties()[0];
 
         expect(result.id).toBe(defaultDifficulty.id);
+      });
+
+      it('should return default difficulty for empty string', () => {
+        const result = resolveDifficulty('');
+        const defaultDifficulty = listDifficulties()[0];
+
+        expect(result.id).toBe(defaultDifficulty.id);
+      });
+
+      describe('invalid id test cases', () => {
+        const invalidIdTestCases = [
+          { id: 'invalid', description: 'invalid id' },
+          { id: 'unknown', description: 'unknown id' },
+          { id: '123', description: 'numeric string' },
+        ];
+
+        invalidIdTestCases.forEach(({ id, description }) => {
+          it(`should return default difficulty for ${description}`, () => {
+            const result = resolveDifficulty(id);
+            const defaultDifficulty = listDifficulties()[0];
+
+            expect(result.id).toBe(defaultDifficulty.id);
+          });
+        });
       });
     });
   });
