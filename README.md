@@ -166,6 +166,18 @@ Esta carpeta contiene documentación técnica detallada sobre las clases, métod
   - Flujos de interacción entre componentes
   - Principios de diseño aplicados (separación de responsabilidades, reactividad, inmutabilidad)
 
+### Documentación de Experiencia de Usuario (`doc/UX/`)
+
+Esta carpeta contiene documentación sobre la experiencia de usuario y diseño de la interfaz:
+
+- **`experence user - ux.md`**: Documentación completa sobre la experiencia de usuario (UX) del juego, incluyendo:
+  - Flujo de navegación y pantallas (Home, Juego)
+  - Reglas de interfaz y validación de formularios
+  - Mecánicas de juego y sistema de dificultad progresiva
+  - Feedback visual e interactivo (efectos de golpe, cambios de color)
+  - Estados de interfaz y reacciones del sistema
+  - Especificaciones técnicas del diseño
+
 ### Cómo usar la documentación
 
 - **Para entender la arquitectura**: Comienza con `architecture project.md` y `creacion.md`
@@ -174,6 +186,7 @@ Esta carpeta contiene documentación técnica detallada sobre las clases, métod
 - **Para trabajar con componentes**: Consulta `most relevant methods and classes.md`
 - **Para configurar i18n**: Revisa `i18n.md`
 - **Para seguir estándares de código**: Consulta `reglas-es6.md`
+- **Para entender la experiencia de usuario**: Consulta `experence user - ux.md`
 
 ## Recursos adicionales
 
