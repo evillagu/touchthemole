@@ -1,6 +1,6 @@
 # TouchTheMole
 
-> **Nota:** La documentación de este proyecto se realiza en español para facilitar la comprensión del proyecto y la documentación ubicada en la carpeta `doc`.
+> **Nota:** La documentación de este proyecto se realiza en español para facilitar la comprensión del proyecto y la documentación ubicada en la carpeta `documentation`.
 
 Este proyecto fue generado usando [Angular CLI](https://github.com/angular/angular-cli) versión 20.3.10.
 
@@ -107,11 +107,71 @@ Para ejecutar pruebas unitarias con el ejecutor de pruebas [Karma](https://karma
 ```bash
 ng test
 ```
+
+## Herramientas de Desarrollo
+
+El proyecto utiliza un conjunto completo de herramientas de análisis estático, formateo y calidad de código para mantener un código limpio, consistente y de alta calidad.
+
+### Análisis Estático de Código
+
+- **ESLint 9.12.0**: Linter principal configurado con:
+  - Reglas recomendadas de ESLint, TypeScript y Angular
+  - Reglas estilísticas de TypeScript
+  - Reglas de accesibilidad para templates HTML
+  - Reglas personalizadas (máximo 20 líneas por función, convenciones de selectores)
+  - Integración con Prettier para evitar conflictos
+  - Scripts disponibles: `npm run lint` y `npm run lint:fix`
+
+- **TypeScript 5.8.0**: Compilador con modo estricto habilitado:
+  - Validaciones estrictas de tipos
+  - Opciones estrictas de Angular (templates, inyección, etc.)
+  - Configuraciones separadas para aplicación y tests
+  - Target ES2022 con módulos ESNext
+
+### Formateo de Código
+
+- **Prettier 3.3.0**: Formateador automático configurado con:
+  - Comillas simples, punto y coma, ancho de línea 80 caracteres
+  - Tabulación de 2 espacios, fin de línea LF
+  - Scripts disponibles: `npm run format` y `npm run format:check`
+
+- **EditorConfig**: Configuración para consistencia entre editores:
+  - Codificación UTF-8, indentación de 2 espacios
+  - Eliminación de espacios en blanco finales
+  - Inserción de nueva línea final
+
+### Testing
+
+- **Karma 6.4.0**: Ejecutor de pruebas con:
+  - Integración con Jasmine 5.1.0
+  - Lanzador de Chrome para pruebas en navegador
+  - Reporter HTML para visualización de resultados
+  - Cobertura de código con `karma-coverage`
+  - Script: `npm run test`
+
+### Validación Completa
+
+- **Script de validación**: `npm run validate`
+  - Ejecuta ESLint, verificación de formato Prettier y tests
+  - Útil para CI/CD y validación antes de commits
+
+### Configuración de Archivos
+
+- **`eslint.config.js`**: Configuración de ESLint con reglas personalizadas
+- **`.prettierrc`**: Configuración de Prettier
+- **`.prettierignore`**: Archivos excluidos del formateo
+- **`.editorconfig`**: Configuración del editor
+- **`tsconfig.json`**: Configuración base de TypeScript
+- **`tsconfig.app.json`**: Configuración para código de aplicación
+- **`tsconfig.spec.json`**: Configuración para tests
+
+Para más detalles sobre las reglas y configuración, consulta la documentación en `documentation/config/reglas-es6.md`.
+
 ## Documentación del Proyecto
 
 El proyecto incluye documentación detallada organizada en dos directorios principales:
 
-### Documentación de Configuración (`doc/config/`)
+### Documentación de Configuración (`documentation/config/`)
 
 Esta carpeta contiene documentación sobre la configuración y arquitectura del proyecto:
 
@@ -138,7 +198,7 @@ Esta carpeta contiene documentación sobre la configuración y arquitectura del 
   - Configuración de reglas recomendadas
   - Ejemplos y mejores prácticas
 
-### Documentación de Especificaciones (`doc/specifications classes methods/`)
+### Documentación de Especificaciones (`documentation/specifications classes methods/`)
 
 Esta carpeta contiene documentación técnica detallada sobre las clases, métodos y funcionalidades específicas:
 
@@ -166,7 +226,7 @@ Esta carpeta contiene documentación técnica detallada sobre las clases, métod
   - Flujos de interacción entre componentes
   - Principios de diseño aplicados (separación de responsabilidades, reactividad, inmutabilidad)
 
-### Documentación de Experiencia de Usuario (`doc/UX/`)
+### Documentación de Experiencia de Usuario (`documentation/UX/`)
 
 Esta carpeta contiene documentación sobre la experiencia de usuario y diseño de la interfaz:
 
