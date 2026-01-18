@@ -6,13 +6,17 @@ describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
 
-  beforeEach(async () => {
+  const setupTestBed = async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent, RouterOutlet]
+      imports: [AppComponent, RouterOutlet],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
+  };
+
+  beforeEach(async () => {
+    await setupTestBed();
   });
 
   it('should create the app', () => {
@@ -23,10 +27,12 @@ describe('AppComponent', () => {
     expect(component.title()).toBe('touch-the-mole');
   });
 
-  it('should render router outlet', () => {
-    fixture.detectChanges();
+  describe('template rendering', () => {
+    it('should render router outlet', () => {
+      fixture.detectChanges();
 
-    const routerOutlet = fixture.nativeElement.querySelector('router-outlet');
-    expect(routerOutlet).toBeTruthy();
+      const routerOutlet = fixture.nativeElement.querySelector('router-outlet');
+      expect(routerOutlet).toBeTruthy();
+    });
   });
 });

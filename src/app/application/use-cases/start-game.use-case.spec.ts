@@ -1,18 +1,37 @@
 import { startGame } from './start-game.use-case';
-import { GameState } from '../../core/domain/game-state.model';
 import { listDifficulties } from './difficulty.use-case';
 import { GAME_CONFIG } from './difficulty.use-case';
 
-describe('startGame', () => {
-  const difficulties = listDifficulties();
+const difficulties = listDifficulties();
 
+describe('startGame', () => {
   describe('player name handling', () => {
     const nameTestCases = [
-      { playerName: 'TestPlayer', expected: 'TestPlayer', description: 'valid name' },
-      { playerName: '  TestPlayer  ', expected: 'TestPlayer', description: 'trimmed name' },
-      { playerName: 'A'.repeat(30), expected: 'A'.repeat(24), description: 'truncated long name' },
-      { playerName: '   ', expected: 'Jugador', description: 'empty after trim uses default' },
-      { playerName: '', expected: 'Jugador', description: 'empty string uses default' }
+      {
+        playerName: 'TestPlayer',
+        expected: 'TestPlayer',
+        description: 'valid name',
+      },
+      {
+        playerName: '  TestPlayer  ',
+        expected: 'TestPlayer',
+        description: 'trimmed name',
+      },
+      {
+        playerName: 'A'.repeat(30),
+        expected: 'A'.repeat(24),
+        description: 'truncated long name',
+      },
+      {
+        playerName: '   ',
+        expected: 'Jugador',
+        description: 'empty after trim uses default',
+      },
+      {
+        playerName: '',
+        expected: 'Jugador',
+        description: 'empty string uses default',
+      },
     ];
 
     nameTestCases.forEach(({ playerName, expected, description }) => {
@@ -34,7 +53,7 @@ describe('startGame', () => {
     const difficultyTestCases = [
       { difficulty: difficulties[0], description: 'low difficulty' },
       { difficulty: difficulties[1], description: 'medium difficulty' },
-      { difficulty: difficulties[2], description: 'high difficulty' }
+      { difficulty: difficulties[2], description: 'high difficulty' },
     ];
 
     difficultyTestCases.forEach(({ difficulty, description }) => {
@@ -50,7 +69,7 @@ describe('startGame', () => {
     const difficultyTestCases = [
       { difficulty: difficulties[0], description: 'low difficulty' },
       { difficulty: difficulties[1], description: 'medium difficulty' },
-      { difficulty: difficulties[2], description: 'high difficulty' }
+      { difficulty: difficulties[2], description: 'high difficulty' },
     ];
 
     difficultyTestCases.forEach(({ difficulty, description }) => {
