@@ -55,7 +55,7 @@ El proyecto sigue una **arquitectura hexagonal (Domain-Driven Design)** con sepa
 
 #### 💼 Application (Casos de Uso)
 - **`application/use-cases/`**: Lógica de negocio pura (funciones puras, inmutables)
-  - `apply-hit.use-case.ts` - Aplicar golpe al topo
+  - `apply-hit.use-case.ts` - Aplicar golpe al topo (añade puntos y tiempo bonus según dificultad)
   - `change-difficulty.use-case.ts` - Cambiar dificultad
   - `start-game.use-case.ts` - Iniciar nueva partida (soporta modo por tiempo)
   - `tick-timer.use-case.ts` - Decrementar tiempo restante del juego
@@ -70,7 +70,7 @@ El proyecto sigue una **arquitectura hexagonal (Domain-Driven Design)** con sepa
 - **`presentation/components/`**: Componentes presentacionales reutilizables
   - `game-board` - Tablero de juego
   - `mole-button` - Botón/agujero individual
-  - `score-board` - Marcador
+  - `score-board` - Marcador con iconos SVG (user-full.svg, trophy-full.svg)
 - **`presentation/pages/`**: Componentes de página (orquestación)
   - `home` - Página inicial
   - `game` - Página principal del juego
@@ -265,7 +265,7 @@ Esta carpeta contiene documentación sobre la configuración y arquitectura del 
 Esta carpeta contiene documentación técnica detallada sobre las clases, métodos y funcionalidades específicas:
 
 - **`use cases.md`**: Especificaciones detalladas de todos los casos de uso de la aplicación, incluyendo:
-  - `apply-hit.use-case.ts`: Lógica para aplicar puntuación al golpear el topo
+  - `apply-hit.use-case.ts`: Lógica para aplicar puntuación al golpear el topo y añadir tiempo bonus según la dificultad
   - `change-difficulty.use-case.ts`: Cambio de dificultad durante el juego
   - `start-game.use-case.ts`: Inicio de nueva partida con validación (soporta modo por tiempo)
   - `tick-timer.use-case.ts`: Decremento del tiempo restante del juego

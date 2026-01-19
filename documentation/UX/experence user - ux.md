@@ -18,7 +18,14 @@ La primera interacción del usuario está diseñada para asegurar la captura de 
 ## 2. Preparación del Juego
 Tras el acceso, el usuario es redirigido al tablero principal donde se presentan los controles de configuración.
 
-* **Identificación y Marcadores**: En la parte superior se visualiza el nombre del jugador ingresado y el marcador de puntos, que inicia en 0.
+* **Identificación y Marcadores Visuales**: 
+  - En la parte superior se visualiza el nombre del jugador junto con un icono circular de usuario (blanco) que representa visualmente al jugador.
+  - El marcador de puntos se muestra junto con un icono circular de trofeo (blanco) que representa los logros del jugador.
+  - Ambos iconos tienen forma circular y color blanco para mantener consistencia visual.
+  - Los valores inician en 0 puntos.
+* **Control de Dificultad**: 
+  - Un icono circular de fuego (blanco) precede al selector de dificultad, representando visualmente la intensidad del juego.
+  - El selector permite elegir entre tres niveles (Bajo, Medio, Alto).
 * **Control de Sesión (Play & Restart)**: El botón principal tiene una doble función:
     1.  **Iniciar**: Dispara la lógica de aparición de los topos.
     2.  **Reiniciar**: Permite resetear el puntaje a 0 en cualquier momento durante la partida.
@@ -59,13 +66,21 @@ El juego funciona con un sistema de tiempo limitado que añade presión y emoci�
 Cuando el tiempo se agota, se muestra un modal visual que informa al jugador sobre el final de la partida.
 
 * **Overlay Oscuro**: Un fondo semitransparente oscuro cubre toda la pantalla, enfocando la atención en el modal.
+* **Accesibilidad del Overlay**:
+    * El overlay es focusable mediante `tabindex="0"` para permitir navegación por teclado.
+    * Soporta eventos de teclado: Enter y Espacio para cerrar el modal.
+    * Tiene `role="button"` para indicar su función interactiva a lectores de pantalla.
+    * Incluye `aria-label="Cerrar modal"` para accesibilidad.
 * **Contenido del Modal**:
+    * **Contenedor del Modal**: Tiene `role="dialog"` para indicar que es un diálogo modal.
     * **Título**: "GAME OVER" en color rojo y tamaño grande.
     * **Puntuación Final**: Muestra la puntuación total obtenida durante la partida.
     * **Botón de Cerrar**: Permite cerrar el modal y continuar.
 * **Interacción**: 
     * El usuario puede cerrar el modal haciendo clic en el botón "Cerrar".
     * También puede cerrar el modal haciendo clic fuera del modal (en el overlay oscuro).
+    * **Navegación por Teclado**: El modal puede cerrarse usando las teclas Enter o Espacio cuando el overlay tiene el foco.
+    * **Prevención de Propagación**: Los eventos de teclado en el contenido del modal no cierran el modal, solo los del overlay.
 * **Después del Modal**: 
     * Una vez cerrado el modal, el usuario puede reiniciar el juego con el botón "Play & Restart".
     * El tablero permanece oculto hasta que se reinicie el juego.
@@ -79,6 +94,13 @@ La interfaz comunica el éxito de las acciones del usuario mediante señales vis
 
 * **Detección de Acierto (Hit)**: Cuando el usuario logra tocar a un topo, el cuadro que lo contiene cambia el color de su borde (ej. resplandor rojo o amarillo). 
 * **Confirmación Visual**: Este cambio cromático sirve como feedback inmediato, indicando que el punto ha sido procesado correctamente por la lógica del juego.
+* **Recompensa Dual**: Al golpear un topo exitosamente:
+  - Se suman puntos según la dificultad (10/20/30 puntos)
+  - Se añade tiempo bonus al cronómetro según la dificultad:
+    - **Dificultad Baja**: +1 segundo
+    - **Dificultad Media**: +1.5 segundos
+    - **Dificultad Alta**: +2 segundos
+* **Estrategia de Tiempo**: Los jugadores pueden extender su tiempo de juego golpeando topos exitosamente, especialmente en dificultades más altas que otorgan más tiempo bonus.
 
 
 

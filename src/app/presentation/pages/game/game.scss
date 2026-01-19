@@ -31,12 +31,27 @@
       flex-direction: row;
       gap: var(--spacing-small);
     }
+    &-controls {
+      display: flex;
+      align-items: center;
+    }
   }
 
   &__label {
     font-size: var(--font-size-base);
     white-space: nowrap;
     font-weight: var(--font-weight-semibold);
+    margin-right: var(--spacing-small);
+  }
+
+  &__icon {
+    width: 1.2em;
+    height: 1.2em;
+    opacity: var(--opacity-label);
+    flex-shrink: 0;
+    object-fit: contain;
+    border-radius: 50%;
+    filter: brightness(0) invert(1);
     margin-right: var(--spacing-small);
   }
 

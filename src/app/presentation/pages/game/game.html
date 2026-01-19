@@ -1,6 +1,9 @@
 <section class="game">
   <header class="game__header">
-    <app-score-board [playerName]="gameState().playerName" [points]="gameState().points"></app-score-board>
+    <app-score-board
+      [playerName]="gameState().playerName"
+      [points]="gameState().points"
+    ></app-score-board>
 
     @if (gameState().isTimeBased && gameState().timeRemaining !== undefined) {
     <span
@@ -12,32 +15,71 @@
     </span>
     }
 
-    <div>
-      <span class="game__label" i18n="@@game.difficulty.label">Dificultad</span>
-      <select class="game__select" [value]="gameState().difficulty.id" (change)="onDifficultyChange($event)">
+    <div class="game__header-controls">
+      <img
+        src="icons/fire-full.svg"
+        alt="Dificultad"
+        class="game__icon"
+        aria-hidden="true"
+      />
+      <select
+        class="game__select"
+        [value]="gameState().difficulty.id"
+        (change)="onDifficultyChange($event)"
+      >
         @for (difficulty of difficulties; track difficulty.id) {
         <option [value]="difficulty.id">{{ difficulty.label }}</option>
         }
       </select>
-      <button type="button" class="game__play" (click)="onRestart()" i18n="@@game.play.button">
+      <button
+        type="button"
+        class="game__play"
+        (click)="onRestart()"
+        i18n="@@game.play.button"
+      >
         Play & Restart
       </button>
     </div>
   </header>
 
   @if (isGameStarted()) {
-  <app-game-board [holes]="holes" [onHit]="handleHit" [activeMoleIndexes]="activeMoleIndexes()"></app-game-board>
+  <app-game-board
+    [holes]="holes"
+    [onHit]="handleHit"
+    [activeMoleIndexes]="activeMoleIndexes()"
+  ></app-game-board>
   }
 
   <div class="game__footer-bottom">
-    <button type="button" class="game__exit" (click)="onChangePlayer()" i18n="@@game.exit.button">
+    <button
+      type="button"
+      class="game__exit"
+      (click)="onChangePlayer()"
+      i18n="@@game.exit.button"
+    >
       Salir
     </button>
   </div>
 
   @if (showGameOver()) {
-  <div class="game__overlay" (click)="onCloseGameOver()">
-    <div class="game__modal" (click)="$event.stopPropagation()">
+  <div
+    class="game__overlay"
+    (click)="onCloseGameOver()"
+    (keydown.enter)="onCloseGameOver()"
+    (keydown.space)="onCloseGameOver()"
+    tabindex="0"
+    role="button"
+    aria-label="Cerrar modal"
+  >
+    <div
+      class="game__modal"
+      (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
+      (keydown.space)="$event.stopPropagation()"
+      tabindex="0"
+      role="dialog"
+      aria-label="GAME OVER"
+    >
       <h2 class="game__modal-title" i18n="@@game.gameOver.title">GAME OVER</h2>
       <p class="game__modal-score" i18n="@@game.gameOver.score">
         Puntuación: {{ finalScore() }}

@@ -4,6 +4,7 @@ export interface Difficulty {
   readonly multiplier: number;
   readonly intervalMs: number;
   readonly points: number;
+  readonly timeBonus: number;
 }
 
 export enum DifficultyId {

@@ -1,6 +1,14 @@
 import { Difficulty, DifficultyId } from '../../core/domain/difficulty.model';
 
-const MUTATION_METHODS = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
+const MUTATION_METHODS = [
+  'push',
+  'pop',
+  'shift',
+  'unshift',
+  'splice',
+  'sort',
+  'reverse',
+];
 
 const createProxyHandler = <T>() => ({
   set: () => {
@@ -45,6 +53,7 @@ const difficultiesData: readonly Difficulty[] = [
     multiplier: 1,
     intervalMs: 1000,
     points: 10,
+    timeBonus: 1,
   }),
   Object.freeze({
     id: DifficultyId.Medium,
@@ -52,6 +61,7 @@ const difficultiesData: readonly Difficulty[] = [
     multiplier: 2,
     intervalMs: 750,
     points: 20,
+    timeBonus: 1.5,
   }),
   Object.freeze({
     id: DifficultyId.High,
@@ -59,10 +69,12 @@ const difficultiesData: readonly Difficulty[] = [
     multiplier: 3,
     intervalMs: 500,
     points: 30,
+    timeBonus: 2,
   }),
 ];
 
-const difficulties: readonly Difficulty[] = createImmutableArray(difficultiesData);
+const difficulties: readonly Difficulty[] =
+  createImmutableArray(difficultiesData);
 
 export const listDifficulties = (): readonly Difficulty[] => difficulties;
 

@@ -1,12 +1,23 @@
-<div class="score-board__stat score-board__stat--w30">
-  <span class="score-board__label" i18n="@@scoreboard.player.label"
-    >Jugador</span
-  >
-  <strong class="score-board__value">{{ playerName() }}</strong>
+<div class="score-board__box">
+  <img
+    src="icons/user-full.svg"
+    alt="Usuario"
+    class="score-board__icon"
+    aria-hidden="true"
+  />
+  <div class="score-board__stat score-board__stat--w30">
+    <strong class="score-board__value">{{ playerName() }}</strong>
+  </div>
 </div>
-<div class="score-board__stat score-board__stat--w12">
-  <span class="score-board__label" i18n="@@scoreboard.points.label"
-    >Puntos</span
-  >
-  <strong class="score-board__value">{{ points() }}</strong>
+
+<div class="score-board__box">
+  <img
+    src="icons/trophy-full.svg"
+    alt="Puntos"
+    class="score-board__icon"
+    aria-hidden="true"
+  />
+  <div class="score-board__stat score-board__stat--w12">
+    <strong class="score-board__value">{{ points() }}</strong>
+  </div>
 </div>
