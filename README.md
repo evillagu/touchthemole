@@ -1,6 +1,6 @@
 # TouchTheMole
 
-> **Nota:** La documentación de este proyecto se realiza en español para facilitar la comprensión del proyecto y la documentación ubicada en la carpeta `doc`.
+> **Nota:** La documentación de este proyecto se realiza en español para facilitar la comprensión del proyecto y la documentación ubicada en la carpeta `documentation`.
 
 Este proyecto fue generado usando [Angular CLI](https://github.com/angular/angular-cli) versión 20.3.10.
 
@@ -42,6 +42,125 @@ Este proyecto utiliza una configuración estructurada para gestionar la compilac
 - **`tsconfig.app.json`**: Hereda de la base (`tsconfig.json`) y se enfoca solo en el código de tu aplicación (`src/**/*.ts`).
 
 - **`angular.json`**: Orquesta todo usando los builders de alto rendimiento (`@angular/build:application` y `@angular/build:dev-server`).
+
+## Estructura del Proyecto
+
+El proyecto sigue una **arquitectura hexagonal (Domain-Driven Design)** con separación clara de capas y dependencias dirigidas hacia el dominio.
+
+### Estructura de Carpetas Principal
+
+```
+touch-the-mole/
+│
+├── .github/                                    # Configuración de GitHub
+│   └── workflows/
+│       └── deploy-gh-pages.yml                 # Workflow de GitHub Actions para despliegue automático
+│
+├── documentation/                              # Documentación del proyecto
+│   ├── config/                                 # Documentación de configuración
+│   ├── specifications classes methods/         # Documentación técnica
+│   └── UX/                                     # Documentación de experiencia de usuario
+│
+├── public/                                     # Assets estáticos copiados al build
+│   ├── 404.html                                # Página 404 para GitHub Pages
+│   ├── icons/                                  # Iconos de la aplicación
+│   ├── manifest.webmanifest                    # Web App Manifest para PWA
+│   └── favicon.ico                             # Icono de la aplicación
+│
+├── src/                                        # Código fuente de la aplicación
+│   ├── app/                                    # Aplicación Angular (arquitectura hexagonal)
+│   │   ├── application/                       # Capa de casos de uso (lógica de negocio)
+│   │   │   └── use-cases/                     # Casos de uso: apply-hit, change-difficulty, start-game, difficulty
+│   │   │
+│   │   ├── core/                              # Capa de dominio (modelos y contratos)
+│   │   │   ├── domain/                        # Modelos de dominio puros (interfaces)
+│   │   │   └── ports/                         # Contratos y tokens de inyección
+│   │   │
+│   │   ├── infrastructure/                    # Capa de infraestructura (implementaciones)
+│   │   │   └── adapters/                      # Implementaciones concretas (localStorage)
+│   │   │
+│   │   ├── presentation/                      # Capa de presentación (UI)
+│   │   │   ├── components/                    # Componentes presentacionales reutilizables
+│   │   │   │   ├── game-board/                # Tablero de juego
+│   │   │   │   ├── mole-button/               # Botón/agujero individual
+│   │   │   │   └── score-board/               # Marcador
+│   │   │   └── pages/                         # Componentes de página (orquestación)
+│   │   │       ├── game/                      # Página principal del juego
+│   │   │       └── home/                      # Página inicial
+│   │   │
+│   │   ├── app.config.ts                      # Configuración global (providers, router, service worker)
+│   │   ├── app.routes.ts                      # Definición de rutas
+│   │   └── app.ts                             # Componente raíz
+│   │
+│   ├── locale/                                 # Archivos de traducción (i18n)
+│   │   ├── messages.es.xlf                    # Traducciones en español
+│   │   └── messages.en.xlf                    # Traducciones en inglés
+│   │
+│   ├── index.html                              # HTML principal (meta tags PWA, base href)
+│   ├── main.ts                                 # Punto de entrada (bootstrap)
+│   └── styles.scss                             # Estilos globales (variables CSS)
+│
+├── angular.json                                # Configuración de Angular CLI
+├── tsconfig.json                               # Configuración base de TypeScript
+├── package.json                                # Dependencias y scripts
+├── eslint.config.js                            # Configuración de ESLint
+├── ngsw-config.json                            # Configuración del Service Worker
+└── README.md                                   # Documentación principal
+```
+
+### Arquitectura por Capas
+
+#### 🎯 Core (Dominio)
+- **`core/domain/`**: Modelos puros (interfaces sin lógica) - `Difficulty`, `GameState`, `User`
+- **`core/ports/`**: Contratos (interfaces) y tokens de inyección - `GameStateRepository`
+
+#### 💼 Application (Casos de Uso)
+- **`application/use-cases/`**: Lógica de negocio pura (funciones puras, inmutables)
+  - `apply-hit.use-case.ts` - Aplicar golpe al topo
+  - `change-difficulty.use-case.ts` - Cambiar dificultad
+  - `start-game.use-case.ts` - Iniciar nueva partida
+  - `difficulty.use-case.ts` - Gestión de dificultades y `GAME_CONFIG`
+
+#### 🔌 Infrastructure (Implementaciones)
+- **`infrastructure/adapters/`**: Implementaciones concretas de los puertos
+  - `local-storage-game-state.adapter.ts` - Persistencia con localStorage
+
+#### 🎨 Presentation (UI)
+- **`presentation/components/`**: Componentes presentacionales reutilizables
+  - `game-board` - Tablero de juego
+  - `mole-button` - Botón/agujero individual
+  - `score-board` - Marcador
+- **`presentation/pages/`**: Componentes de página (orquestación)
+  - `home` - Página inicial
+  - `game` - Página principal del juego
+
+### Flujo de Dependencias
+
+```
+presentation (UI)
+    ↓ depende de
+application (Casos de Uso)
+    ↓ depende de
+core (Dominio y Puertos)
+    ↑ implementado por
+infrastructure (Adaptadores)
+```
+
+**Regla**: Las dependencias siempre apuntan hacia el centro (core). La infraestructura implementa los puertos pero no depende de presentation.
+
+### Convenciones de Nomenclatura
+
+- **Componentes**: PascalCase (ej: `HomePageComponent`)
+- **Archivos**: kebab-case (ej: `home-page.component.ts`)
+- **Casos de uso**: kebab-case con sufijo `.use-case.ts`
+- **Modelos**: kebab-case con sufijo `.model.ts`
+- **Puertos**: kebab-case con sufijo `.port.ts`
+- **Adaptadores**: kebab-case con sufijo `.adapter.ts`
+- **Tests**: mismo nombre con sufijo `.spec.ts`
+- **Estilos**: mismo nombre con extensión `.scss`
+- **Templates**: mismo nombre con extensión `.html`
+
+Para más detalles sobre la estructura completa del proyecto, consulta `documentation/project-structure.md`.
 
 ## Internacionalización (i18n)
 
@@ -107,11 +226,71 @@ Para ejecutar pruebas unitarias con el ejecutor de pruebas [Karma](https://karma
 ```bash
 ng test
 ```
+
+## Herramientas de Desarrollo
+
+El proyecto utiliza un conjunto completo de herramientas de análisis estático, formateo y calidad de código para mantener un código limpio, consistente y de alta calidad.
+
+### Análisis Estático de Código
+
+- **ESLint 9.12.0**: Linter principal configurado con:
+  - Reglas recomendadas de ESLint, TypeScript y Angular
+  - Reglas estilísticas de TypeScript
+  - Reglas de accesibilidad para templates HTML
+  - Reglas personalizadas (máximo 20 líneas por función, convenciones de selectores)
+  - Integración con Prettier para evitar conflictos
+  - Scripts disponibles: `npm run lint` y `npm run lint:fix`
+
+- **TypeScript 5.8.0**: Compilador con modo estricto habilitado:
+  - Validaciones estrictas de tipos
+  - Opciones estrictas de Angular (templates, inyección, etc.)
+  - Configuraciones separadas para aplicación y tests
+  - Target ES2022 con módulos ESNext
+
+### Formateo de Código
+
+- **Prettier 3.3.0**: Formateador automático configurado con:
+  - Comillas simples, punto y coma, ancho de línea 80 caracteres
+  - Tabulación de 2 espacios, fin de línea LF
+  - Scripts disponibles: `npm run format` y `npm run format:check`
+
+- **EditorConfig**: Configuración para consistencia entre editores:
+  - Codificación UTF-8, indentación de 2 espacios
+  - Eliminación de espacios en blanco finales
+  - Inserción de nueva línea final
+
+### Testing
+
+- **Karma 6.4.0**: Ejecutor de pruebas con:
+  - Integración con Jasmine 5.1.0
+  - Lanzador de Chrome para pruebas en navegador
+  - Reporter HTML para visualización de resultados
+  - Cobertura de código con `karma-coverage`
+  - Script: `npm run test`
+
+### Validación Completa
+
+- **Script de validación**: `npm run validate`
+  - Ejecuta ESLint, verificación de formato Prettier y tests
+  - Útil para CI/CD y validación antes de commits
+
+### Configuración de Archivos
+
+- **`eslint.config.js`**: Configuración de ESLint con reglas personalizadas
+- **`.prettierrc`**: Configuración de Prettier
+- **`.prettierignore`**: Archivos excluidos del formateo
+- **`.editorconfig`**: Configuración del editor
+- **`tsconfig.json`**: Configuración base de TypeScript
+- **`tsconfig.app.json`**: Configuración para código de aplicación
+- **`tsconfig.spec.json`**: Configuración para tests
+
+Para más detalles sobre las reglas y configuración, consulta la documentación en `documentation/config/reglas-es6.md`.
+
 ## Documentación del Proyecto
 
 El proyecto incluye documentación detallada organizada en dos directorios principales:
 
-### Documentación de Configuración (`doc/config/`)
+### Documentación de Configuración (`documentation/config/`)
 
 Esta carpeta contiene documentación sobre la configuración y arquitectura del proyecto:
 
@@ -138,7 +317,7 @@ Esta carpeta contiene documentación sobre la configuración y arquitectura del 
   - Configuración de reglas recomendadas
   - Ejemplos y mejores prácticas
 
-### Documentación de Especificaciones (`doc/specifications classes methods/`)
+### Documentación de Especificaciones (`documentation/specifications classes methods/`)
 
 Esta carpeta contiene documentación técnica detallada sobre las clases, métodos y funcionalidades específicas:
 
@@ -166,7 +345,7 @@ Esta carpeta contiene documentación técnica detallada sobre las clases, métod
   - Flujos de interacción entre componentes
   - Principios de diseño aplicados (separación de responsabilidades, reactividad, inmutabilidad)
 
-### Documentación de Experiencia de Usuario (`doc/UX/`)
+### Documentación de Experiencia de Usuario (`documentation/UX/`)
 
 Esta carpeta contiene documentación sobre la experiencia de usuario y diseño de la interfaz:
 
@@ -180,6 +359,7 @@ Esta carpeta contiene documentación sobre la experiencia de usuario y diseño d
 
 ### Cómo usar la documentación
 
+- **Para entender la estructura del proyecto**: Consulta `project-structure.md`
 - **Para entender la arquitectura**: Comienza con `architecture project.md` y `creacion.md`
 - **Para configurar PWA**: Consulta `config-PWA.md`
 - **Para entender la lógica de negocio**: Revisa `use cases.md`

@@ -5,7 +5,7 @@
   [class.mole-button--hit]="isHit()"
   (click)="onHit()"
 >
-  @if (isActive()) {
+  @if (isActive() || isHit()) {
   <img
     src="icons/topo.svg"
     alt="Topo"

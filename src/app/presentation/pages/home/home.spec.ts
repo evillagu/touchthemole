@@ -49,15 +49,15 @@ describe('HomePageComponent', () => {
 
     validationTestCases.forEach(({ input, isValid, description }) => {
       it(`should ${isValid ? 'be valid' : 'be invalid'} for ${description}`, () => {
-        component.nameControl.setValue(input);
+        component.form.controls.playerName.setValue(input);
         fixture.detectChanges();
 
-        expect(component.nameControl.valid).toBe(isValid);
+        expect(component.form.controls.playerName.valid).toBe(isValid);
       });
     });
 
     it('should disable button when form is invalid', () => {
-      component.nameControl.setValue('');
+      component.form.controls.playerName.setValue('');
       fixture.detectChanges();
 
       const button = fixture.nativeElement.querySelector('.home__button');
@@ -65,7 +65,7 @@ describe('HomePageComponent', () => {
     });
 
     it('should enable button when form is valid', () => {
-      component.nameControl.setValue('TestPlayer');
+      component.form.controls.playerName.setValue('TestPlayer');
       fixture.detectChanges();
 
       const button = fixture.nativeElement.querySelector('.home__button');
@@ -73,7 +73,7 @@ describe('HomePageComponent', () => {
     });
   });
 
-  describe('start method', () => {
+  describe('onSubmit method', () => {
     const startTestCases = [
       {
         playerName: 'Player1',
@@ -89,10 +89,10 @@ describe('HomePageComponent', () => {
 
     startTestCases.forEach(({ playerName, shouldNavigate, description }) => {
       it(`should save state and navigate ${description}`, () => {
-        component.nameControl.setValue(playerName);
+        component.form.controls.playerName.setValue(playerName);
         fixture.detectChanges();
 
-        component.start();
+        component.onSubmit();
 
         expect(mockRepository.save).toHaveBeenCalled();
         const savedState = mockRepository.save.calls.mostRecent().args[0];
@@ -106,20 +106,20 @@ describe('HomePageComponent', () => {
     });
 
     it('should not navigate when form is invalid', () => {
-      component.nameControl.setValue('');
+      component.form.controls.playerName.setValue('');
       fixture.detectChanges();
 
-      component.start();
+      component.onSubmit();
 
       expect(mockRepository.save).not.toHaveBeenCalled();
       expect(mockRouter.navigate).not.toHaveBeenCalled();
     });
 
     it('should trim player name', () => {
-      component.nameControl.setValue('  TestPlayer  ');
+      component.form.controls.playerName.setValue('  TestPlayer  ');
       fixture.detectChanges();
 
-      component.start();
+      component.onSubmit();
 
       const savedState = mockRepository.save.calls.mostRecent().args[0];
       expect(savedState.playerName).toBe('TestPlayer');
@@ -127,10 +127,10 @@ describe('HomePageComponent', () => {
 
     it('should limit player name length', () => {
       const longName = 'A'.repeat(30);
-      component.nameControl.setValue(longName);
+      component.form.controls.playerName.setValue(longName);
       fixture.detectChanges();
 
-      component.start();
+      component.onSubmit();
 
       const savedState = mockRepository.save.calls.mostRecent().args[0];
       expect(savedState.playerName.length).toBeLessThanOrEqual(24);

@@ -1,36 +1,41 @@
 import { Difficulty, DifficultyId } from '../../core/domain/difficulty.model';
 
+const MUTATION_METHODS = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
+
+const createProxyHandler = <T>() => ({
+  set: () => {
+    throw new Error('Cannot modify readonly array');
+  },
+  deleteProperty: () => {
+    throw new Error('Cannot delete from readonly array');
+  },
+  get: (target: readonly T[], prop: string | symbol) => {
+    if (typeof prop === 'string' && MUTATION_METHODS.includes(prop)) {
+      return () => {
+        throw new Error(`Cannot call ${prop} on readonly array`);
+      };
+    }
+    return target[prop as keyof typeof target];
+  },
+});
+
 const createImmutableArray = <T>(items: readonly T[]): readonly T[] => {
   const frozen = Object.freeze([...items]);
-  return new Proxy(frozen, {
-    set: () => {
-      throw new Error('Cannot modify readonly array');
-    },
-    deleteProperty: () => {
-      throw new Error('Cannot delete from readonly array');
-    },
-    get: (target, prop) => {
-      if (
-        typeof prop === 'string' &&
-        ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].includes(
-          prop
-        )
-      ) {
-        return () => {
-          throw new Error(`Cannot call ${prop} on readonly array`);
-        };
-      }
-      return target[prop as keyof typeof target];
-    },
-  }) as readonly T[];
+  return new Proxy(frozen, createProxyHandler<T>()) as readonly T[];
 };
 
 export const GAME_CONFIG = Object.freeze({
   minVisibilityMs: 800,
   hitDelayMs: 500,
+  hitDelayMsWithEffect: 200,
+  hitEffectDurationMs: 200,
   totalHoles: 9,
   maxPlayerNameLength: 24,
   defaultPlayerName: 'Jugador',
+  defaultGameDurationSeconds: 30,
+  lowTimeThreshold: 5,
+  speedIncreaseThreshold: 10,
+  fastIntervalMultiplier: 0.625,
 } as const);
 
 const difficultiesData: readonly Difficulty[] = [
