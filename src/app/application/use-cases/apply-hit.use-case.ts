@@ -23,10 +23,7 @@ export const applyHit = (state: GameState): GameState => {
     state.isTimeBased &&
     state.timeRemaining !== undefined &&
     state.timeRemaining !== null
-      ? calculateTimeBonus(
-          state.timeRemaining,
-          state.difficulty.timeBonus
-        )
+      ? calculateTimeBonus(state.timeRemaining, state.difficulty.timeBonus)
       : state.timeRemaining;
 
   return {
