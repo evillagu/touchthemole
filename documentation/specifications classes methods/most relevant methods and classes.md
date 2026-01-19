@@ -85,7 +85,7 @@ component.start();
 
 ##### `gameState: WritableSignal<GameState>`
 
-Signal reactivo que contiene el estado completo del juego (nombre del jugador, puntos, dificultad).
+Signal reactivo que contiene el estado completo del juego (nombre del jugador, puntos, dificultad, tiempo restante, duración, modo por tiempo).
 
 **Inicialización**: Se carga desde el repositorio o se crea un estado por defecto si no existe.
 
@@ -122,6 +122,28 @@ Signal que contiene un array con los índices de los agujeros donde están los t
 - `[number, number]`: Dos topos visibles simultáneamente en los índices especificados (cada 5 topos que aparecen)
 
 **Comportamiento especial**: Cada 5 topos que aparecen (`moleCounter % 5 === 0`), se muestran 2 topos simultáneamente en lugar de 1.
+
+##### `gameConfig: typeof GAME_CONFIG`
+
+Referencia a la configuración global del juego (`GAME_CONFIG`). Se expone públicamente para uso en templates.
+
+**Uso**: Permite acceder a valores de configuración como `lowTimeThreshold` en el template HTML.
+
+##### `showGameOver: Signal<boolean>`
+
+Signal que controla la visibilidad del modal GAME OVER.
+
+**Valores**:
+- `false`: Modal oculto
+- `true`: Modal visible
+
+**Uso**: Se establece en `true` cuando el tiempo llega a 0 para mostrar el modal de finalización.
+
+##### `finalScore: Signal<number>`
+
+Signal que almacena la puntuación final cuando el juego termina por tiempo.
+
+**Uso**: Se establece con la puntuación final antes de mostrar el modal GAME OVER.
 
 ##### `difficulties: readonly Difficulty[]`
 
@@ -177,21 +199,24 @@ component.onDifficultyChange(event);
 
 ##### `onRestart(): void`
 
-**Propósito**: Reinicia la partida actual, reseteando los puntos a 0 pero manteniendo el nombre del jugador y la dificultad actual.
+**Propósito**: Reinicia la partida actual, reseteando los puntos a 0 pero manteniendo el nombre del jugador y la dificultad actual. Inicia el juego en modo por tiempo.
 
 **Lógica**:
 1. Obtiene el estado actual del juego
-2. Crea un nuevo estado con `startGame()` usando el nombre actual y la dificultad actual
-3. Actualiza el estado del juego (puntos reseteados a 0)
+2. Crea un nuevo estado con `startGame()` usando el nombre actual, la dificultad actual y `isTimeBased: true`
+3. Actualiza el estado del juego (puntos reseteados a 0, tiempo inicializado)
 4. Establece `isGameStarted` a `true`
 5. Resetea `activeMoleIndexes` a un array vacío
 6. Resetea `moleCounter` a 0
 7. Inicia el movimiento del topo llamando a `startMoleMovement()`
+8. Si el juego es por tiempo (`isTimeBased`), inicia el timer llamando a `startTimer()`
 
 **Efectos secundarios**:
 - Resetea los puntos a 0
-- Guarda el nuevo estado en el repositorio
+- Inicializa el tiempo del juego (30 segundos por defecto)
+- Inicia el cronómetro que decrementa cada segundo
 - Inicia inmediatamente el movimiento del topo
+- No guarda el estado en el repositorio durante el juego por tiempo (solo al finalizar)
 
 **Ejemplo de uso**:
 ```typescript
@@ -215,13 +240,25 @@ component.onRestart();
 
 **Lógica**:
 1. Detiene el movimiento del topo llamando a `stopMoleMovement()`
-2. Limpia el repositorio usando `repository.clear()`
-3. Navega a la ruta `/home` usando `router.navigate()`
+2. Detiene el timer llamando a `stopTimer()`
+3. Limpia el repositorio usando `repository.clear()`
+4. Navega a la ruta `/home` usando `router.navigate()`
 
 **Efectos secundarios**:
 - Detiene todos los timers e intervalos del movimiento del topo
+- Detiene el cronómetro del juego
 - Elimina el estado guardado del localStorage
 - Navega a la página de inicio
+
+##### `onCloseGameOver(): void`
+
+**Propósito**: Cierra el modal GAME OVER cuando el usuario hace clic en el botón de cerrar o en el overlay.
+
+**Lógica**:
+1. Establece `showGameOver` a `false`
+
+**Efectos secundarios**:
+- Oculta el modal GAME OVER
 
 **Ejemplo de uso**:
 ```typescript
@@ -244,7 +281,8 @@ component.onChangePlayer();
 **Propósito**: Método del ciclo de vida de Angular que se ejecuta cuando el componente se destruye. Limpia recursos para prevenir memory leaks.
 
 **Lógica**:
-1. Llama a `stopMoleMovement()` para detener todos los timers e intervalos
+1. Llama a `stopMoleMovement()` para detener todos los timers e intervalos del movimiento del topo
+2. Llama a `stopTimer()` para detener el cronómetro del juego
 
 **Cuándo se ejecuta**:
 - Cuando el usuario navega fuera de la página de juego
@@ -529,8 +567,125 @@ handleHit(5); // Aplica el golpe al topo en el agujero 5 y lo elimina del array
 
 **Características**:
 - **Reactivo**: Actualiza el signal que dispara cambios en la UI
-- **Persistente**: Guarda automáticamente en el repositorio
+- **Persistente**: Guarda automáticamente en el repositorio (solo si no es modo por tiempo)
 - **Centralizado**: Único punto de actualización del estado
+- **Condicional**: No guarda en el repositorio durante juegos por tiempo (solo al finalizar)
+
+---
+
+##### `startTimer(): void`
+
+**Propósito**: Inicia el cronómetro del juego que decrementa el tiempo restante cada segundo.
+
+**Lógica**:
+1. Detiene cualquier timer existente llamando a `stopTimer()`
+2. Crea un `setInterval` que se ejecuta cada 1000ms (1 segundo)
+3. En cada iteración:
+   - Obtiene el estado actual del juego
+   - Verifica que el juego esté en modo por tiempo y tenga tiempo restante
+   - Llama a `tickTimer()` para decrementar el tiempo
+   - Actualiza el estado con el nuevo tiempo
+   - Si el tiempo llega a 0, llama a `finishGameByTime()`
+
+**Efectos secundarios**:
+- Inicia un intervalo que se ejecuta cada segundo
+- Actualiza el estado del juego con el tiempo decrementado
+- Finaliza el juego automáticamente cuando el tiempo llega a 0
+
+**Cuándo se llama**:
+- Al iniciar el juego (`onRestart()`) si el juego es por tiempo
+
+**Características**:
+- **Automático**: Se ejecuta continuamente hasta que el tiempo llega a 0
+- **Seguro**: Valida condiciones antes de decrementar el tiempo
+- **Reactivo**: Actualiza el estado que dispara cambios visuales en el template
+
+---
+
+##### `stopTimer(): void`
+
+**Propósito**: Detiene el cronómetro del juego limpiando el intervalo activo.
+
+**Lógica**:
+1. Si existe `timerInterval`, lo cancela con `clearInterval()`
+2. Establece `timerInterval` a `null`
+
+**Efectos secundarios**:
+- Detiene el decremento automático del tiempo
+- Limpia el intervalo activo
+
+**Cuándo se llama**:
+- Al cambiar de jugador (`onChangePlayer()`)
+- Al finalizar el juego por tiempo (`finishGameByTime()`)
+- Al destruir el componente (`ngOnDestroy()`)
+
+**Características**:
+- **Limpio**: Previene memory leaks cancelando intervalos
+- **Seguro**: Maneja casos donde el intervalo no existe
+
+---
+
+##### `finishGameByTime(): void`
+
+**Propósito**: Finaliza el juego cuando el tiempo llega a 0, deteniendo todos los procesos y mostrando el modal GAME OVER.
+
+**Lógica**:
+1. Detiene el movimiento del topo llamando a `stopMoleMovement()`
+2. Detiene el timer llamando a `stopTimer()`
+3. Llama a `endGameByTime()` para establecer el tiempo en 0
+4. Actualiza el estado final del juego
+5. Establece `isGameStarted` a `false`
+6. Guarda la puntuación final en `finalScore`
+7. Muestra el modal GAME OVER estableciendo `showGameOver` a `true`
+
+**Efectos secundarios**:
+- Detiene todos los procesos del juego
+- Oculta el tablero de juego
+- Muestra el modal con la puntuación final
+
+**Cuándo se llama**:
+- Automáticamente cuando `tickTimer()` detecta que el tiempo llegó a 0
+
+**Características**:
+- **Completo**: Detiene todos los procesos activos
+- **Visual**: Muestra feedback al usuario con el modal
+- **Preserva puntuación**: Mantiene la puntuación final para mostrarla
+
+---
+
+##### `calculateMoleInterval(baseInterval: number, timeRemaining?: number): number`
+
+**Propósito**: Calcula el intervalo de aparición de topos ajustándolo según el tiempo restante. Cuando queda poco tiempo, aumenta la velocidad.
+
+**Parámetros**:
+- `baseInterval: number` - Intervalo base según la dificultad (en milisegundos)
+- `timeRemaining?: number` - Tiempo restante del juego (opcional)
+
+**Retorno**: Intervalo ajustado en milisegundos.
+
+**Lógica**:
+1. Si no hay tiempo restante o es mayor que `GAME_CONFIG.speedIncreaseThreshold` (10 segundos), retorna el intervalo base
+2. Si el tiempo restante es ≤10 segundos, aplica `GAME_CONFIG.fastIntervalMultiplier` (0.625) al intervalo base
+3. Retorna el intervalo ajustado redondeado hacia abajo
+
+**Ejemplo de uso**:
+```typescript
+const baseInterval = 1000; // 1 segundo (dificultad baja)
+const timeRemaining = 8;  // 8 segundos restantes
+
+const adjustedInterval = component.calculateMoleInterval(baseInterval, timeRemaining);
+// Retorna: 625ms (1000 * 0.625)
+```
+
+**Dónde se usa**:
+- En `startMoleMovement()` para establecer el intervalo inicial
+- En `moveMole()` para calcular el tiempo de visibilidad
+- En `scheduleNextMoleInterval()` para ajustar dinámicamente el intervalo
+
+**Características**:
+- **Dinámico**: Ajusta la velocidad según el tiempo restante
+- **Configurable**: Usa valores de `GAME_CONFIG` para los umbrales
+- **Progresivo**: Aumenta la dificultad cuando queda poco tiempo
 
 ---
 
