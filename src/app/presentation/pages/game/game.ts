@@ -52,10 +52,17 @@ export class GamePageComponent implements OnDestroy {
 
   constructor() {
     const loadedState = this.repository.load();
-    this.gameState = signal<GameState>(
-      loadedState ??
-        startGame(GAME_CONFIG.defaultPlayerName, this.difficulties[0])
-    );
+    let initialState: GameState;
+    if (loadedState) {
+      const normalizedDifficulty = resolveDifficulty(loadedState.difficulty.id);
+      initialState = {
+        ...loadedState,
+        difficulty: normalizedDifficulty,
+      };
+    } else {
+      initialState = startGame(GAME_CONFIG.defaultPlayerName, this.difficulties[0]);
+    }
+    this.gameState = signal<GameState>(initialState);
     this.isGameStarted.set(false);
     this.moleCounter = 0;
     this.handleHit = this.initializeHandleHit();

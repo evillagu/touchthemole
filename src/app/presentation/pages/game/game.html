@@ -12,8 +12,13 @@
     </span>
     }
 
-    <div>
-      <span class="game__label" i18n="@@game.difficulty.label">Dificultad</span>
+    <div class="game__header-controls">
+      <img 
+        src="icons/fire-full.svg" 
+        alt="Dificultad" 
+        class="game__icon"
+        aria-hidden="true"
+      />
       <select class="game__select" [value]="gameState().difficulty.id" (change)="onDifficultyChange($event)">
         @for (difficulty of difficulties; track difficulty.id) {
         <option [value]="difficulty.id">{{ difficulty.label }}</option>
@@ -36,8 +41,24 @@
   </div>
 
   @if (showGameOver()) {
-  <div class="game__overlay" (click)="onCloseGameOver()">
-    <div class="game__modal" (click)="$event.stopPropagation()">
+  <div 
+    class="game__overlay" 
+    (click)="onCloseGameOver()"
+    (keydown.enter)="onCloseGameOver()"
+    (keydown.space)="onCloseGameOver()"
+    tabindex="0"
+    role="button"
+    aria-label="Cerrar modal"
+  >
+    <div 
+      class="game__modal" 
+      (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
+      (keydown.space)="$event.stopPropagation()"
+      tabindex="0"
+      role="dialog"
+      aria-label="GAME OVER"
+    >
       <h2 class="game__modal-title" i18n="@@game.gameOver.title">GAME OVER</h2>
       <p class="game__modal-score" i18n="@@game.gameOver.score">
         Puntuación: {{ finalScore() }}

@@ -37,7 +37,7 @@ Cada componente/página sigue la estructura:
 ### Core
 - `core/domain`: modelos puros (interfaces) del dominio:
   - `GameState`: estado del juego (nombre jugador, puntos, dificultad, tiempo restante, duración, modo por tiempo)
-  - `Difficulty`: configuración de dificultad (id, label, multiplier, intervalMs, points)
+  - `Difficulty`: configuración de dificultad (id, label, multiplier, intervalMs, points, timeBonus)
   - `User`: modelo de usuario
 - `core/ports`: contratos y tokens de inyección:
   - `GameStateRepository`: interfaz para persistencia
@@ -63,7 +63,7 @@ Cada componente/página sigue la estructura:
 - `presentation/components`: componentes reutilizables:
   - `mole-button`: botón individual que muestra/oculta el topo con estados visuales
   - `game-board`: tablero con grid de 3x3 botones
-  - `score-board`: panel que muestra nombre del jugador y puntuación
+  - `score-board`: panel que muestra nombre del jugador y puntuación mediante iconos SVG (user-full.svg, trophy-full.svg)
 
 ## Tecnologías y prácticas
 
