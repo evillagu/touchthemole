@@ -15,7 +15,9 @@ import {
   resolveDifficulty,
   GAME_CONFIG,
 } from '../../../application/use-cases/difficulty.use-case';
+import { endGameByTime } from '../../../application/use-cases/end-game-by-time.use-case';
 import { startGame } from '../../../application/use-cases/start-game.use-case';
+import { tickTimer } from '../../../application/use-cases/tick-timer.use-case';
 import { GameState } from '../../../core/domain/game-state.model';
 import { GAME_STATE_REPOSITORY } from '../../../core/ports/game-state-repository.token';
 import { GameBoardComponent } from '../../components/game-board/game-board';
@@ -38,9 +40,13 @@ export class GamePageComponent implements OnDestroy {
   readonly handleHit: (holeIndex: number) => void;
   readonly isGameStarted = signal<boolean>(false);
   readonly activeMoleIndexes = signal<number[]>([]);
+  readonly gameConfig = GAME_CONFIG;
+  readonly showGameOver = signal<boolean>(false);
+  readonly finalScore = signal<number>(0);
 
   private moleInterval: ReturnType<typeof setInterval> | null = null;
   private moleTimeout: ReturnType<typeof setTimeout> | null = null;
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
   private moleCounter = 0;
   private hasActiveHitEffect = signal<boolean>(false);
 
@@ -66,30 +72,64 @@ export class GamePageComponent implements OnDestroy {
 
   onRestart(): void {
     const current = this.gameState();
-    this.updateState(startGame(current.playerName, current.difficulty));
+    this.updateState(startGame(current.playerName, current.difficulty, true));
     this.isGameStarted.set(true);
     this.activeMoleIndexes.set([]);
     this.moleCounter = 0;
     this.startMoleMovement();
+    if (this.gameState().isTimeBased) {
+      this.startTimer();
+    }
   }
 
   onChangePlayer(): void {
     this.stopMoleMovement();
+    this.stopTimer();
     this.repository.clear();
     this.router.navigate(['/home']);
   }
 
   ngOnDestroy(): void {
     this.stopMoleMovement();
+    this.stopTimer();
   }
 
   private startMoleMovement(): void {
     this.stopMoleMovement();
+    if (!this.isGameStarted()) {
+      return;
+    }
     this.moveMole();
-    const interval = this.gameState().difficulty.intervalMs;
+    this.scheduleNextMoleInterval();
+  }
+
+  private scheduleNextMoleInterval(): void {
+    if (!this.isGameStarted() || this.moleInterval !== null) {
+      return;
+    }
+    const baseInterval = this.gameState().difficulty.intervalMs;
+    const timeRemaining = this.gameState().timeRemaining;
+    const interval = this.calculateMoleInterval(baseInterval, timeRemaining);
     this.moleInterval = setInterval(() => {
-      this.moveMole();
+      this.handleMoleIntervalTick(interval);
     }, interval);
+  }
+
+  private handleMoleIntervalTick(originalInterval: number): void {
+    if (!this.isGameStarted()) {
+      this.stopMoleMovement();
+      return;
+    }
+    const currentBaseInterval = this.gameState().difficulty.intervalMs;
+    const currentTimeRemaining = this.gameState().timeRemaining;
+    const currentInterval = this.calculateMoleInterval(currentBaseInterval, currentTimeRemaining);
+    if (currentInterval !== originalInterval) {
+      clearInterval(this.moleInterval!);
+      this.moleInterval = null;
+      this.scheduleNextMoleInterval();
+      return;
+    }
+    this.moveMole();
   }
 
   private stopMoleMovement(): void {
@@ -106,31 +146,43 @@ export class GamePageComponent implements OnDestroy {
   }
 
   private moveMole(): void {
-    this.moleCounter++;
-
-    let indexesToShow: number[];
-
-    if (this.moleCounter % 5 === 0) {
-      indexesToShow = this.getTwoRandomIndexes();
-    } else {
-      indexesToShow = [this.getRandomIndex()];
+    if (!this.isGameStarted()) {
+      return;
     }
 
+    this.moleCounter++;
+    const indexesToShow = this.selectMoleIndexes();
     this.activeMoleIndexes.set(indexesToShow);
+    this.scheduleMoleVisibility(indexesToShow);
+  }
 
+  private selectMoleIndexes(): number[] {
+    if (this.moleCounter % 5 === 0) {
+      return this.getTwoRandomIndexes();
+    }
+    return [this.getRandomIndex()];
+  }
+
+  private scheduleMoleVisibility(indexesToShow: number[]): void {
     if (this.moleTimeout !== null) {
       clearTimeout(this.moleTimeout);
     }
 
-    const interval = this.gameState().difficulty.intervalMs;
+    const baseInterval = this.gameState().difficulty.intervalMs;
+    const timeRemaining = this.gameState().timeRemaining;
+    const interval = this.calculateMoleInterval(baseInterval, timeRemaining);
     const visibilityTime = Math.max(GAME_CONFIG.minVisibilityMs, interval);
 
     this.moleTimeout = setTimeout(() => {
-      const currentIndexes = this.activeMoleIndexes();
-      if (this.arraysEqual(currentIndexes, indexesToShow)) {
-        this.activeMoleIndexes.set([]);
-      }
+      this.hideMoleIfStillActive(indexesToShow);
     }, visibilityTime);
+  }
+
+  private hideMoleIfStillActive(indexesToShow: number[]): void {
+    const currentIndexes = this.activeMoleIndexes();
+    if (this.arraysEqual(currentIndexes, indexesToShow)) {
+      this.activeMoleIndexes.set([]);
+    }
   }
 
   private getRandomIndex(): number {
@@ -160,38 +212,46 @@ export class GamePageComponent implements OnDestroy {
 
   private initializeHandleHit(): (holeIndex: number) => void {
     return (holeIndex: number): void => {
-      const currentIndexes = this.activeMoleIndexes();
-
-      if (currentIndexes.includes(holeIndex)) {
-        const nextState = applyHit(this.gameState());
-        this.updateState(nextState);
-
-        const remainingIndexes = currentIndexes.filter(
-          (idx) => idx !== holeIndex
-        );
-        this.activeMoleIndexes.set(remainingIndexes);
-
-        if (remainingIndexes.length === 0) {
-          this.hasActiveHitEffect.set(true);
-          setTimeout(() => {
-            this.hasActiveHitEffect.set(false);
-          }, GAME_CONFIG.hitEffectDurationMs);
-
-          if (this.moleTimeout !== null) {
-            clearTimeout(this.moleTimeout);
-            this.moleTimeout = null;
-          }
-
-          const delay = this.hasActiveHitEffect()
-            ? GAME_CONFIG.hitDelayMsWithEffect
-            : GAME_CONFIG.hitDelayMs;
-
-          this.moleTimeout = setTimeout(() => {
-            this.moveMole();
-          }, delay);
-        }
-      }
+      this.processHit(holeIndex);
     };
+  }
+
+  private processHit(holeIndex: number): void {
+    const currentIndexes = this.activeMoleIndexes();
+
+    if (currentIndexes.includes(holeIndex)) {
+      const nextState = applyHit(this.gameState());
+      this.updateState(nextState);
+
+      const remainingIndexes = currentIndexes.filter(
+        (idx) => idx !== holeIndex
+      );
+      this.activeMoleIndexes.set(remainingIndexes);
+
+      if (remainingIndexes.length === 0) {
+        this.handleAllMolesHit();
+      }
+    }
+  }
+
+  private handleAllMolesHit(): void {
+    this.hasActiveHitEffect.set(true);
+    setTimeout(() => {
+      this.hasActiveHitEffect.set(false);
+    }, GAME_CONFIG.hitEffectDurationMs);
+
+    if (this.moleTimeout !== null) {
+      clearTimeout(this.moleTimeout);
+      this.moleTimeout = null;
+    }
+
+    const delay = this.hasActiveHitEffect()
+      ? GAME_CONFIG.hitDelayMsWithEffect
+      : GAME_CONFIG.hitDelayMs;
+
+    this.moleTimeout = setTimeout(() => {
+      this.moveMole();
+    }, delay);
   }
 
   private initializeDifficultyEffect(): void {
@@ -203,8 +263,55 @@ export class GamePageComponent implements OnDestroy {
     });
   }
 
+  private startTimer(): void {
+    this.stopTimer();
+    this.timerInterval = setInterval(() => {
+      const currentState = this.gameState();
+      if (!currentState.isTimeBased || !currentState.timeRemaining) {
+        return;
+      }
+
+      const nextState = tickTimer(currentState);
+      this.updateState(nextState);
+
+      if (nextState.timeRemaining === 0) {
+        this.finishGameByTime();
+      }
+    }, 1000);
+  }
+
+  private stopTimer(): void {
+    if (this.timerInterval !== null) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  private finishGameByTime(): void {
+    this.stopMoleMovement();
+    this.stopTimer();
+    const finalState = endGameByTime(this.gameState());
+    this.updateState(finalState);
+    this.isGameStarted.set(false);
+    this.finalScore.set(finalState.points);
+    this.showGameOver.set(true);
+  }
+
+  onCloseGameOver(): void {
+    this.showGameOver.set(false);
+  }
+
+  private calculateMoleInterval(baseInterval: number, timeRemaining?: number): number {
+    if (!timeRemaining || timeRemaining > GAME_CONFIG.speedIncreaseThreshold) {
+      return baseInterval;
+    }
+    return Math.floor(baseInterval * GAME_CONFIG.fastIntervalMultiplier);
+  }
+
   private updateState(state: GameState): void {
     this.gameState.set(state);
-    this.repository.save(state);
+    if (!state.isTimeBased) {
+      this.repository.save(state);
+    }
   }
 }

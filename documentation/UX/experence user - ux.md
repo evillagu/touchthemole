@@ -34,6 +34,42 @@ El núcleo del juego se basa en una cuadrícula de 3x3 con comportamientos diná
     * Al inicio, los topos aparecen de uno en uno.
     * **Regla de Intensidad**: Tras la aparición de los primeros 5 topos, el sistema incrementa el desafío mostrando **2 topos simultáneos** en el tablero.
 
+---
+
+## 3.1. Sistema de Juego por Tiempo
+
+El juego funciona con un sistema de tiempo limitado que añade presión y emoción a la partida.
+
+* **Cronómetro Visual**: En el header del juego se muestra el tiempo restante en formato "Tiempo: Xs". El cronómetro se actualiza cada segundo.
+* **Duración de Partida**: Cada partida tiene una duración de 30 segundos por defecto.
+* **Aceleración Progresiva**: 
+    * Cuando quedan **10 segundos o menos**, la velocidad de aparición de topos aumenta automáticamente (62.5% del tiempo original).
+    * Esto hace que el juego sea más intenso y desafiante hacia el final.
+* **Alerta Visual de Tiempo Bajo**: 
+    * Cuando quedan **5 segundos o menos**, el cronómetro cambia a color rojo y parpadea.
+    * Esta animación alerta visualmente al jugador de que el tiempo está por agotarse.
+* **Finalización Automática**: 
+    * Cuando el tiempo llega a 0, el juego se detiene automáticamente.
+    * Todos los topos desaparecen y se muestra el modal GAME OVER.
+
+---
+
+## 3.2. Modal GAME OVER
+
+Cuando el tiempo se agota, se muestra un modal visual que informa al jugador sobre el final de la partida.
+
+* **Overlay Oscuro**: Un fondo semitransparente oscuro cubre toda la pantalla, enfocando la atención en el modal.
+* **Contenido del Modal**:
+    * **Título**: "GAME OVER" en color rojo y tamaño grande.
+    * **Puntuación Final**: Muestra la puntuación total obtenida durante la partida.
+    * **Botón de Cerrar**: Permite cerrar el modal y continuar.
+* **Interacción**: 
+    * El usuario puede cerrar el modal haciendo clic en el botón "Cerrar".
+    * También puede cerrar el modal haciendo clic fuera del modal (en el overlay oscuro).
+* **Después del Modal**: 
+    * Una vez cerrado el modal, el usuario puede reiniciar el juego con el botón "Play & Restart".
+    * El tablero permanece oculto hasta que se reinicie el juego.
+
 
 
 ---
@@ -54,9 +90,13 @@ La interfaz comunica el éxito de las acciones del usuario mediante señales vis
 | :--- | :--- | :--- |
 | **Input Nombre** | Vacío | Botón "Start" bloqueado. |
 | **Input Nombre** | Con texto | Botón "Start" activo. |
-| **Botón Play/Restart** | Clic | Inicia temporizador y limpia puntos. |
-| **Tablero (Topo)** | Tocar/Clic | Cambio de color en el borde del cuadro. |
-| **Botón Salir** | Clic | Redirección inmediata al Home. |
+| **Botón Play/Restart** | Clic | Inicia temporizador, limpia puntos e inicia cronómetro de 30 segundos. |
+| **Tablero (Topo)** | Tocar/Clic | Cambio de color en el borde del cuadro y suma puntos. |
+| **Cronómetro** | Automático | Decrementa cada segundo. Parpadea en rojo cuando quedan ≤5 segundos. |
+| **Modal GAME OVER** | Tiempo = 0 | Aparece automáticamente mostrando puntuación final. |
+| **Botón Cerrar (Modal)** | Clic | Cierra el modal GAME OVER. |
+| **Overlay (Modal)** | Clic | Cierra el modal GAME OVER al hacer clic fuera. |
+| **Botón Salir** | Clic | Detiene timer y redirección inmediata al Home. |
 
 ---
 
