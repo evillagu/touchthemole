@@ -43,6 +43,125 @@ Este proyecto utiliza una configuración estructurada para gestionar la compilac
 
 - **`angular.json`**: Orquesta todo usando los builders de alto rendimiento (`@angular/build:application` y `@angular/build:dev-server`).
 
+## Estructura del Proyecto
+
+El proyecto sigue una **arquitectura hexagonal (Domain-Driven Design)** con separación clara de capas y dependencias dirigidas hacia el dominio.
+
+### Estructura de Carpetas Principal
+
+```
+touch-the-mole/
+│
+├── .github/                                    # Configuración de GitHub
+│   └── workflows/
+│       └── deploy-gh-pages.yml                 # Workflow de GitHub Actions para despliegue automático
+│
+├── documentation/                              # Documentación del proyecto
+│   ├── config/                                 # Documentación de configuración
+│   ├── specifications classes methods/         # Documentación técnica
+│   └── UX/                                     # Documentación de experiencia de usuario
+│
+├── public/                                     # Assets estáticos copiados al build
+│   ├── 404.html                                # Página 404 para GitHub Pages
+│   ├── icons/                                  # Iconos de la aplicación
+│   ├── manifest.webmanifest                    # Web App Manifest para PWA
+│   └── favicon.ico                             # Icono de la aplicación
+│
+├── src/                                        # Código fuente de la aplicación
+│   ├── app/                                    # Aplicación Angular (arquitectura hexagonal)
+│   │   ├── application/                       # Capa de casos de uso (lógica de negocio)
+│   │   │   └── use-cases/                     # Casos de uso: apply-hit, change-difficulty, start-game, difficulty
+│   │   │
+│   │   ├── core/                              # Capa de dominio (modelos y contratos)
+│   │   │   ├── domain/                        # Modelos de dominio puros (interfaces)
+│   │   │   └── ports/                         # Contratos y tokens de inyección
+│   │   │
+│   │   ├── infrastructure/                    # Capa de infraestructura (implementaciones)
+│   │   │   └── adapters/                      # Implementaciones concretas (localStorage)
+│   │   │
+│   │   ├── presentation/                      # Capa de presentación (UI)
+│   │   │   ├── components/                    # Componentes presentacionales reutilizables
+│   │   │   │   ├── game-board/                # Tablero de juego
+│   │   │   │   ├── mole-button/               # Botón/agujero individual
+│   │   │   │   └── score-board/               # Marcador
+│   │   │   └── pages/                         # Componentes de página (orquestación)
+│   │   │       ├── game/                      # Página principal del juego
+│   │   │       └── home/                      # Página inicial
+│   │   │
+│   │   ├── app.config.ts                      # Configuración global (providers, router, service worker)
+│   │   ├── app.routes.ts                      # Definición de rutas
+│   │   └── app.ts                             # Componente raíz
+│   │
+│   ├── locale/                                 # Archivos de traducción (i18n)
+│   │   ├── messages.es.xlf                    # Traducciones en español
+│   │   └── messages.en.xlf                    # Traducciones en inglés
+│   │
+│   ├── index.html                              # HTML principal (meta tags PWA, base href)
+│   ├── main.ts                                 # Punto de entrada (bootstrap)
+│   └── styles.scss                             # Estilos globales (variables CSS)
+│
+├── angular.json                                # Configuración de Angular CLI
+├── tsconfig.json                               # Configuración base de TypeScript
+├── package.json                                # Dependencias y scripts
+├── eslint.config.js                            # Configuración de ESLint
+├── ngsw-config.json                            # Configuración del Service Worker
+└── README.md                                   # Documentación principal
+```
+
+### Arquitectura por Capas
+
+#### 🎯 Core (Dominio)
+- **`core/domain/`**: Modelos puros (interfaces sin lógica) - `Difficulty`, `GameState`, `User`
+- **`core/ports/`**: Contratos (interfaces) y tokens de inyección - `GameStateRepository`
+
+#### 💼 Application (Casos de Uso)
+- **`application/use-cases/`**: Lógica de negocio pura (funciones puras, inmutables)
+  - `apply-hit.use-case.ts` - Aplicar golpe al topo
+  - `change-difficulty.use-case.ts` - Cambiar dificultad
+  - `start-game.use-case.ts` - Iniciar nueva partida
+  - `difficulty.use-case.ts` - Gestión de dificultades y `GAME_CONFIG`
+
+#### 🔌 Infrastructure (Implementaciones)
+- **`infrastructure/adapters/`**: Implementaciones concretas de los puertos
+  - `local-storage-game-state.adapter.ts` - Persistencia con localStorage
+
+#### 🎨 Presentation (UI)
+- **`presentation/components/`**: Componentes presentacionales reutilizables
+  - `game-board` - Tablero de juego
+  - `mole-button` - Botón/agujero individual
+  - `score-board` - Marcador
+- **`presentation/pages/`**: Componentes de página (orquestación)
+  - `home` - Página inicial
+  - `game` - Página principal del juego
+
+### Flujo de Dependencias
+
+```
+presentation (UI)
+    ↓ depende de
+application (Casos de Uso)
+    ↓ depende de
+core (Dominio y Puertos)
+    ↑ implementado por
+infrastructure (Adaptadores)
+```
+
+**Regla**: Las dependencias siempre apuntan hacia el centro (core). La infraestructura implementa los puertos pero no depende de presentation.
+
+### Convenciones de Nomenclatura
+
+- **Componentes**: PascalCase (ej: `HomePageComponent`)
+- **Archivos**: kebab-case (ej: `home-page.component.ts`)
+- **Casos de uso**: kebab-case con sufijo `.use-case.ts`
+- **Modelos**: kebab-case con sufijo `.model.ts`
+- **Puertos**: kebab-case con sufijo `.port.ts`
+- **Adaptadores**: kebab-case con sufijo `.adapter.ts`
+- **Tests**: mismo nombre con sufijo `.spec.ts`
+- **Estilos**: mismo nombre con extensión `.scss`
+- **Templates**: mismo nombre con extensión `.html`
+
+Para más detalles sobre la estructura completa del proyecto, consulta `documentation/project-structure.md`.
+
 ## Internacionalización (i18n)
 
 El proyecto implementa internacionalización utilizando el sistema nativo de Angular i18n basado en el estándar XLIFF (XML Localization Interchange File Format).
@@ -240,6 +359,7 @@ Esta carpeta contiene documentación sobre la experiencia de usuario y diseño d
 
 ### Cómo usar la documentación
 
+- **Para entender la estructura del proyecto**: Consulta `project-structure.md`
 - **Para entender la arquitectura**: Comienza con `architecture project.md` y `creacion.md`
 - **Para configurar PWA**: Consulta `config-PWA.md`
 - **Para entender la lógica de negocio**: Revisa `use cases.md`

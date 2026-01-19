@@ -68,7 +68,7 @@ jobs:
             <script>
               sessionStorage.redirect = location.href;
             </script>
-            <meta http-equiv="refresh" content="0;URL='$BASE_HREFindex.html'">
+            <meta http-equiv="refresh" content="0;URL='index.html'">
           </head>
           <body></body>
           </html>

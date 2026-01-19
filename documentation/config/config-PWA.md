@@ -126,11 +126,13 @@ El Service Worker gestiona el cache de recursos para habilitar funcionalidad off
 ```json
 {
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
-  "index": "/index.html",
+  "index": "index.html",
   "assetGroups": [...],
   "dataGroups": []
 }
 ```
+
+**Nota importante**: El `index` y las rutas en `assetGroups` deben ser **relativas** (sin barra inicial `/`) para que respeten el `base-href` configurado durante el build. Esto es especialmente importante para despliegues en GitHub Pages.
 
 #### Asset Groups
 
@@ -145,10 +147,10 @@ Los asset groups definen qué recursos se cachean y cómo.
   "updateMode": "prefetch",
   "resources": {
     "files": [
-      "/favicon.ico",
-      "/index.csr.html",
-      "/index.html",
-      "/manifest.webmanifest",
+      "favicon.ico",
+      "index.csr.html",
+      "index.html",
+      "manifest.webmanifest",
       "/*.css",
       "/*.js"
     ]
@@ -166,6 +168,11 @@ Los asset groups definen qué recursos se cachean y cómo.
 - Archivos HTML (index.html, index.csr.html)
 - Archivos CSS y JavaScript
 - Favicon y manifest
+
+**Nota importante sobre rutas**:
+- Las rutas en `ngsw-config.json` deben ser **relativas** (sin barra inicial `/`) para que respeten el `base-href` configurado durante el build
+- Esto es especialmente importante cuando se despliega en GitHub Pages con un `base-href` como `/touch-the-mole/`
+- Las rutas absolutas pueden causar errores 404 y bucles infinitos en algunos navegadores cuando el Service Worker intenta cargar recursos desde la raíz en lugar de desde el `base-href`
 
 ##### Grupo "assets"
 
@@ -788,6 +795,39 @@ El Service Worker funciona correctamente en GitHub Pages porque:
 1. GitHub Pages proporciona HTTPS automáticamente
 2. Verificar que el base href es correcto
 3. Verificar que `ngsw-worker.js` se genera en el build
+
+#### Error: Bucle infinito y `/.html 404` en navegadores (excepto Chrome)
+
+**Causa**: El Service Worker está intentando cargar recursos desde rutas absolutas que no respetan el `base-href`.
+
+**Síntomas**:
+- La aplicación funciona en Chrome pero falla en otros navegadores
+- Error: `GET https://username.github.io/touchthemole/.html 404`
+- Bucle infinito de redirecciones
+
+**Solución**:
+1. Verificar que `ngsw-config.json` usa rutas relativas (sin barra inicial `/`)
+2. Verificar que el `index` en `ngsw-config.json` es `"index.html"` (no `"/index.html"`)
+3. Verificar que los archivos en `assetGroups` usan rutas relativas
+4. Verificar que el build se hace con `--base-href` correcto
+
+**Ejemplo de configuración correcta**:
+```json
+{
+  "index": "index.html",
+  "assetGroups": [
+    {
+      "resources": {
+        "files": [
+          "favicon.ico",
+          "index.html",
+          "manifest.webmanifest"
+        ]
+      }
+    }
+  ]
+}
+```
 
 #### El workflow falla
 
