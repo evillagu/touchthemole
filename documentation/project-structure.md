@@ -58,13 +58,17 @@ touch-the-mole/
 │   │   │       ├── change-difficulty.use-case.spec.ts # Tests del caso de uso change-difficulty
 │   │   │       ├── difficulty.use-case.ts    # Caso de uso: gestión de dificultades y GAME_CONFIG
 │   │   │       ├── difficulty.use-case.spec.ts # Tests del caso de uso difficulty
+│   │   │       ├── start-game.use-case.ts     # Caso de uso: iniciar nueva partida (soporta modo por tiempo)
+│   │   │       ├── start-game.use-case.spec.ts # Tests del caso de uso start-game
+│   │   │       ├── tick-timer.use-case.ts      # Caso de uso: decrementar tiempo restante
+│   │   │       └── end-game-by-time.use-case.ts # Caso de uso: finalizar juego por tiempo
 │   │   │       ├── start-game.use-case.ts     # Caso de uso: iniciar nueva partida
 │   │   │       └── start-game.use-case.spec.ts # Tests del caso de uso start-game
 │   │   │
 │   │   ├── core/                              # Capa de dominio (modelos y contratos)
 │   │   │   ├── domain/                        # Modelos de dominio puros (interfaces)
 │   │   │   │   ├── difficulty.model.ts       # Interfaz Difficulty (configuración de dificultad)
-│   │   │   │   ├── game-state.model.ts       # Interfaz GameState (estado del juego)
+│   │   │   │   ├── game-state.model.ts       # Interfaz GameState (estado del juego con soporte de tiempo)
 │   │   │   │   └── user.model.ts             # Interfaz User (modelo de usuario)
 │   │   │   │
 │   │   │   └── ports/                         # Contratos y tokens de inyección

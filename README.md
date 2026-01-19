@@ -47,67 +47,6 @@ Este proyecto utiliza una configuración estructurada para gestionar la compilac
 
 El proyecto sigue una **arquitectura hexagonal (Domain-Driven Design)** con separación clara de capas y dependencias dirigidas hacia el dominio.
 
-### Estructura de Carpetas Principal
-
-```
-touch-the-mole/
-│
-├── .github/                                    # Configuración de GitHub
-│   └── workflows/
-│       └── deploy-gh-pages.yml                 # Workflow de GitHub Actions para despliegue automático
-│
-├── documentation/                              # Documentación del proyecto
-│   ├── config/                                 # Documentación de configuración
-│   ├── specifications classes methods/         # Documentación técnica
-│   └── UX/                                     # Documentación de experiencia de usuario
-│
-├── public/                                     # Assets estáticos copiados al build
-│   ├── 404.html                                # Página 404 para GitHub Pages
-│   ├── icons/                                  # Iconos de la aplicación
-│   ├── manifest.webmanifest                    # Web App Manifest para PWA
-│   └── favicon.ico                             # Icono de la aplicación
-│
-├── src/                                        # Código fuente de la aplicación
-│   ├── app/                                    # Aplicación Angular (arquitectura hexagonal)
-│   │   ├── application/                       # Capa de casos de uso (lógica de negocio)
-│   │   │   └── use-cases/                     # Casos de uso: apply-hit, change-difficulty, start-game, difficulty
-│   │   │
-│   │   ├── core/                              # Capa de dominio (modelos y contratos)
-│   │   │   ├── domain/                        # Modelos de dominio puros (interfaces)
-│   │   │   └── ports/                         # Contratos y tokens de inyección
-│   │   │
-│   │   ├── infrastructure/                    # Capa de infraestructura (implementaciones)
-│   │   │   └── adapters/                      # Implementaciones concretas (localStorage)
-│   │   │
-│   │   ├── presentation/                      # Capa de presentación (UI)
-│   │   │   ├── components/                    # Componentes presentacionales reutilizables
-│   │   │   │   ├── game-board/                # Tablero de juego
-│   │   │   │   ├── mole-button/               # Botón/agujero individual
-│   │   │   │   └── score-board/               # Marcador
-│   │   │   └── pages/                         # Componentes de página (orquestación)
-│   │   │       ├── game/                      # Página principal del juego
-│   │   │       └── home/                      # Página inicial
-│   │   │
-│   │   ├── app.config.ts                      # Configuración global (providers, router, service worker)
-│   │   ├── app.routes.ts                      # Definición de rutas
-│   │   └── app.ts                             # Componente raíz
-│   │
-│   ├── locale/                                 # Archivos de traducción (i18n)
-│   │   ├── messages.es.xlf                    # Traducciones en español
-│   │   └── messages.en.xlf                    # Traducciones en inglés
-│   │
-│   ├── index.html                              # HTML principal (meta tags PWA, base href)
-│   ├── main.ts                                 # Punto de entrada (bootstrap)
-│   └── styles.scss                             # Estilos globales (variables CSS)
-│
-├── angular.json                                # Configuración de Angular CLI
-├── tsconfig.json                               # Configuración base de TypeScript
-├── package.json                                # Dependencias y scripts
-├── eslint.config.js                            # Configuración de ESLint
-├── ngsw-config.json                            # Configuración del Service Worker
-└── README.md                                   # Documentación principal
-```
-
 ### Arquitectura por Capas
 
 #### 🎯 Core (Dominio)
@@ -118,7 +57,9 @@ touch-the-mole/
 - **`application/use-cases/`**: Lógica de negocio pura (funciones puras, inmutables)
   - `apply-hit.use-case.ts` - Aplicar golpe al topo
   - `change-difficulty.use-case.ts` - Cambiar dificultad
-  - `start-game.use-case.ts` - Iniciar nueva partida
+  - `start-game.use-case.ts` - Iniciar nueva partida (soporta modo por tiempo)
+  - `tick-timer.use-case.ts` - Decrementar tiempo restante del juego
+  - `end-game-by-time.use-case.ts` - Finalizar juego cuando el tiempo llega a 0
   - `difficulty.use-case.ts` - Gestión de dificultades y `GAME_CONFIG`
 
 #### 🔌 Infrastructure (Implementaciones)
@@ -294,6 +235,8 @@ El proyecto incluye documentación detallada organizada en dos directorios princ
 
 Esta carpeta contiene documentación sobre la configuración y arquitectura del proyecto:
 
+- **`project-structure`**: Esquema donde viene estructurada, la arquietectura que tiene el proyecto.
+
 - **`architecture project.md`**: Describe la arquitectura hexagonal (Domain-Driven Design) implementada en el proyecto, incluyendo las capas (core, application, infrastructure, presentation), el flujo de dependencias, y la estructura de archivos. También documenta las tecnologías y prácticas utilizadas (Angular Signals, i18n, metodología BEM, etc.).
 
 - **`config-PWA.md`**: Documentación completa sobre la configuración de Progressive Web App (PWA), incluyendo:
@@ -324,7 +267,9 @@ Esta carpeta contiene documentación técnica detallada sobre las clases, métod
 - **`use cases.md`**: Especificaciones detalladas de todos los casos de uso de la aplicación, incluyendo:
   - `apply-hit.use-case.ts`: Lógica para aplicar puntuación al golpear el topo
   - `change-difficulty.use-case.ts`: Cambio de dificultad durante el juego
-  - `start-game.use-case.ts`: Inicio de nueva partida con validación
+  - `start-game.use-case.ts`: Inicio de nueva partida con validación (soporta modo por tiempo)
+  - `tick-timer.use-case.ts`: Decremento del tiempo restante del juego
+  - `end-game-by-time.use-case.ts`: Finalización del juego cuando el tiempo llega a 0
   - `difficulty.use-case.ts`: Gestión de dificultades y configuración centralizada (`GAME_CONFIG`)
   - Principios de diseño (inmutabilidad, funciones puras, separación de responsabilidades)
   - Flujos de uso y ejemplos de implementación
@@ -338,7 +283,7 @@ Esta carpeta contiene documentación técnica detallada sobre las clases, métod
   - Workflow de traducción y troubleshooting
 
 - **`most relevant methods and classes.md`**: Documentación exhaustiva de los métodos y clases más relevantes de la aplicación, incluyendo:
-  - **Componentes de Páginas**: `HomePageComponent`, `GamePageComponent` (con todos sus métodos públicos y privados)
+  - **Componentes de Páginas**: `HomePageComponent`, `GamePageComponent` (con todos sus métodos públicos y privados, incluyendo gestión de timer y modal GAME OVER)
   - **Componentes Presentacionales**: `GameBoardComponent`, `MoleButtonComponent`, `ScoreBoardComponent`
   - **Adaptadores de Infraestructura**: `LocalStorageGameStateAdapter`
   - **Puertos e Interfaces**: `GameStateRepository`
@@ -353,7 +298,9 @@ Esta carpeta contiene documentación sobre la experiencia de usuario y diseño d
   - Flujo de navegación y pantallas (Home, Juego)
   - Reglas de interfaz y validación de formularios
   - Mecánicas de juego y sistema de dificultad progresiva
-  - Feedback visual e interactivo (efectos de golpe, cambios de color)
+  - **Sistema de juego por tiempo**: Cronómetro, alertas visuales y finalización automática
+  - **Modal GAME OVER**: Pantalla de finalización con puntuación final
+  - Feedback visual e interactivo (efectos de golpe, cambios de color, parpadeo del timer)
   - Estados de interfaz y reacciones del sistema
   - Especificaciones técnicas del diseño
 

@@ -36,7 +36,7 @@ Cada componente/página sigue la estructura:
 
 ### Core
 - `core/domain`: modelos puros (interfaces) del dominio:
-  - `GameState`: estado del juego (nombre jugador, puntos, dificultad)
+  - `GameState`: estado del juego (nombre jugador, puntos, dificultad, tiempo restante, duración, modo por tiempo)
   - `Difficulty`: configuración de dificultad (id, label, multiplier, intervalMs, points)
   - `User`: modelo de usuario
 - `core/ports`: contratos y tokens de inyección:
@@ -45,9 +45,11 @@ Cada componente/página sigue la estructura:
 
 ### Application
 - `application/use-cases`: casos de uso puros:
-  - `start-game.use-case.ts`: iniciar nueva partida con validación de nombre
+  - `start-game.use-case.ts`: iniciar nueva partida con validación de nombre (soporta modo por tiempo)
   - `change-difficulty.use-case.ts`: cambiar dificultad durante el juego
   - `apply-hit.use-case.ts`: aplicar puntuación al golpear el topo
+  - `tick-timer.use-case.ts`: decrementar tiempo restante del juego
+  - `end-game-by-time.use-case.ts`: finalizar juego cuando el tiempo llega a 0
   - `difficulty.use-case.ts`: gestión de dificultades y `GAME_CONFIG` centralizado
 
 ### Infrastructure
@@ -57,7 +59,7 @@ Cada componente/página sigue la estructura:
 ### Presentation
 - `presentation/pages`: páginas de la aplicación:
   - `home`: página inicial con formulario para ingresar nombre del jugador
-  - `game`: página de juego con tablero, controles y puntuación
+  - `game`: página de juego con tablero, controles, puntuación, timer y modal GAME OVER
 - `presentation/components`: componentes reutilizables:
   - `mole-button`: botón individual que muestra/oculta el topo con estados visuales
   - `game-board`: tablero con grid de 3x3 botones
