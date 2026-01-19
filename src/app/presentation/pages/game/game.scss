@@ -40,6 +40,23 @@
     margin-right: var(--spacing-small);
   }
 
+  &__timer {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+
+    &--low {
+      color: var(--color-error);
+      animation: parpadeo 0.5s infinite;
+    }
+  }
+
+  @keyframes parpadeo {
+    50% {
+      opacity: 0.5;
+    }
+  }
+
   &__footer-bottom {
     text-align: center;
   }
@@ -66,7 +83,7 @@
     font-size: var(--font-size-small);
     width: auto;
     white-space: nowrap;
-    margin-left: var(--spacing-small);
+    margin-left: var(--spacing-large);
   }
 
   &__exit {
@@ -81,6 +98,66 @@
     width: 100%;
     max-width: var(--max-width-button-small);
     margin: 0 auto;
+    transition:
+      background-color var(--transition-duration),
+      border-color var(--transition-duration);
+
+    &:hover {
+      background: var(--color-background-button-hover);
+      border-color: var(--color-border-hover);
+    }
+
+    &:active {
+      background: var(--color-background-button-active);
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  &__modal {
+    background: var(--color-background-header);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-large);
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+    box-shadow: var(--shadow-box);
+    color: var(--color-text-primary);
+  }
+
+  &__modal-title {
+    font-size: var(--font-size-title);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-medium);
+    color: var(--color-error);
+  }
+
+  &__modal-score {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-large);
+  }
+
+  &__modal-button {
+    padding: clamp(0.625rem, 2vw, 0.875rem) clamp(1rem, 3vw, 1.5rem);
+    border: var(--border-width-thin) solid var(--color-border-button);
+    border-radius: var(--border-radius-pill);
+    background: var(--color-background-button);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    font-size: var(--font-size-base);
     transition:
       background-color var(--transition-duration),
       border-color var(--transition-duration);
