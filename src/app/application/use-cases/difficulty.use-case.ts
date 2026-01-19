@@ -32,6 +32,10 @@ export const GAME_CONFIG = Object.freeze({
   totalHoles: 9,
   maxPlayerNameLength: 24,
   defaultPlayerName: 'Jugador',
+  defaultGameDurationSeconds: 30,
+  lowTimeThreshold: 5,
+  speedIncreaseThreshold: 10,
+  fastIntervalMultiplier: 0.625,
 } as const);
 
 const difficultiesData: readonly Difficulty[] = [

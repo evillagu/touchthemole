@@ -2,6 +2,16 @@
   <header class="game__header">
     <app-score-board [playerName]="gameState().playerName" [points]="gameState().points"></app-score-board>
 
+    @if (gameState().isTimeBased && gameState().timeRemaining !== undefined) {
+    <span
+      class="game__timer"
+      [class.game__timer--low]="gameState().timeRemaining! <= gameConfig.lowTimeThreshold"
+      i18n="@@game.timer.label"
+    >
+      Tiempo: {{ gameState().timeRemaining }}s
+    </span>
+    }
+
     <div>
       <span class="game__label" i18n="@@game.difficulty.label">Dificultad</span>
       <select class="game__select" [value]="gameState().difficulty.id" (change)="onDifficultyChange($event)">
@@ -24,4 +34,23 @@
       Salir
     </button>
   </div>
+
+  @if (showGameOver()) {
+  <div class="game__overlay" (click)="onCloseGameOver()">
+    <div class="game__modal" (click)="$event.stopPropagation()">
+      <h2 class="game__modal-title" i18n="@@game.gameOver.title">GAME OVER</h2>
+      <p class="game__modal-score" i18n="@@game.gameOver.score">
+        Puntuación: {{ finalScore() }}
+      </p>
+      <button
+        type="button"
+        class="game__modal-button"
+        (click)="onCloseGameOver()"
+        i18n="@@game.gameOver.close"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+  }
 </section>
