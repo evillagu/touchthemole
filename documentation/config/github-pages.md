@@ -267,11 +267,11 @@ BASE_HREF="/touch-the-mole/"  # La app está en /touch-the-mole/
       <script>
         sessionStorage.redirect = location.href;
       </script>
-      <meta http-equiv="refresh" content="0;URL='$BASE_HREFindex.html'">
-    </head>
-    <body></body>
-    </html>
-    EOF
+            <meta http-equiv="refresh" content="0;URL='index.html'">
+          </head>
+          <body></body>
+          </html>
+          EOF
 ```
 
 **Comando equivalente**:
@@ -287,7 +287,7 @@ cat > dist/touch-the-mole/browser/404.html << 'EOF'
   <script>
     sessionStorage.redirect = location.href;
   </script>
-  <meta http-equiv="refresh" content="0;URL='/touch-the-mole/index.html'">
+  <meta http-equiv="refresh" content="0;URL='index.html'">
 </head>
 <body></body>
 </html>
@@ -307,13 +307,18 @@ EOF
 
 1. **`<base href="/touch-the-mole/">`**: Define la ruta base (debe coincidir con el base-href del build)
 2. **`sessionStorage.redirect`**: Guarda la URL original para que Angular pueda redirigir después
-3. **`<meta http-equiv="refresh">`**: Redirige inmediatamente a `index.html`
+3. **`<meta http-equiv="refresh">`**: Redirige inmediatamente a `index.html` usando una ruta relativa
+
+**Nota importante sobre la redirección**:
+- La redirección usa `URL='index.html'` (ruta relativa) en lugar de `URL='/touch-the-mole/index.html'` (ruta absoluta)
+- Esto evita conflictos con el Service Worker y problemas de bucle infinito en diferentes navegadores
+- El `<base href>` ya establece la ruta base, por lo que la redirección relativa funciona correctamente
 
 **Ejemplo de flujo**:
 1. Usuario accede a: `https://username.github.io/touch-the-mole/game`
 2. GitHub Pages no encuentra `game.html`
 3. Sirve `404.html` automáticamente
-4. `404.html` redirige a `/touch-the-mole/index.html`
+4. `404.html` redirige a `index.html` (relativo, resuelto como `/touch-the-mole/index.html` gracias al `<base href>`)
 5. Angular carga y el Router navega a `/game`
 
 ---
@@ -779,6 +784,59 @@ Si el repositorio es `username/username.github.io`:
 
 ---
 
+### Error: Bucle infinito y error `/.html 404` en navegadores (excepto Chrome)
+
+**Causa**: El Service Worker está intentando cargar recursos desde rutas absolutas que no respetan el `base-href`, causando 404s y bucles infinitos.
+
+**Síntomas**:
+- La aplicación funciona en Chrome pero falla en otros navegadores (Firefox, Safari, Edge)
+- Error en consola: `GET https://username.github.io/touchthemole/.html 404 (not found)`
+- Bucle infinito de redirecciones
+- El Service Worker intenta cargar recursos desde la raíz (`/`) en lugar de desde el `base-href` (`/touchthemole/`)
+
+**Solución**:
+
+1. **Verificar `ngsw-config.json` usa rutas relativas**:
+   ```json
+   {
+     "index": "index.html",  // ← Sin barra inicial
+     "assetGroups": [
+       {
+         "resources": {
+           "files": [
+             "favicon.ico",        // ← Sin barra inicial
+             "index.html",         // ← Sin barra inicial
+             "manifest.webmanifest" // ← Sin barra inicial
+           ]
+         }
+       }
+     ]
+   }
+   ```
+
+2. **Verificar que `404.html` usa redirección relativa**:
+   ```html
+   <meta http-equiv="refresh" content="0;URL='index.html'">
+   ```
+   En lugar de:
+   ```html
+   <meta http-equiv="refresh" content="0;URL='/touchthemole/index.html'">
+   ```
+
+3. **Verificar que el build se hace con `--base-href`**:
+   ```bash
+   ng build --configuration=production --base-href="/touchthemole/"
+   ```
+
+**Por qué ocurre**:
+- Chrome es más tolerante con rutas incorrectas del Service Worker
+- Otros navegadores fallan estrictamente cuando el Service Worker intenta cargar recursos desde rutas absolutas que no existen
+- Las rutas absolutas en `ngsw-config.json` no respetan el `base-href`, causando que el Service Worker busque recursos en la raíz del dominio en lugar de en la subruta del repositorio
+
+**Nota**: Este problema se corrige usando rutas relativas en `ngsw-config.json` y redirecciones relativas en `404.html`, permitiendo que Angular ajuste automáticamente las rutas según el `base-href` configurado.
+
+---
+
 ## 9. Verificación Post-Deploy
 
 ### Checklist de Verificación
@@ -811,7 +869,7 @@ cat > dist/touch-the-mole/browser/404.html << 'EOF'
   <script>
     sessionStorage.redirect = location.href;
   </script>
-  <meta http-equiv="refresh" content="0;URL='/touch-the-mole/index.html'">
+  <meta http-equiv="refresh" content="0;URL='index.html'">
 </head>
 <body></body>
 </html>
