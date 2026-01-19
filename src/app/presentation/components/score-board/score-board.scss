@@ -1,12 +1,16 @@
 .score-board {
   &__stat {
-    display: grid;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
     gap: var(--spacing-small);
     text-align: center;
     background: var(--color-white);
     color: var(--color-text-on-white);
     border-radius: var(--border-radius);
-    padding: var(--spacing-small);
+    width: max-content;
+    padding: 0 12px;
   }
 
   &__label {
@@ -21,3 +25,4 @@
     font-weight: var(--font-weight-bold);
   }
 }
+
