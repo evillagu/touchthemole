@@ -1,20 +1,33 @@
 import { GameState } from '../../core/domain/game-state.model';
 
+const calculateTimeBonus = (
+  timeRemaining: number | undefined,
+  timeBonus: number | undefined
+): number | undefined => {
+  if (timeRemaining === undefined || timeRemaining === null) {
+    return timeRemaining;
+  }
+  const bonus =
+    typeof timeBonus === 'number' && !isNaN(timeBonus) ? timeBonus : 0;
+  const current =
+    typeof timeRemaining === 'number' && !isNaN(timeRemaining)
+      ? timeRemaining
+      : 0;
+  const calculated = current + bonus;
+  return isNaN(calculated) ? timeRemaining : calculated;
+};
+
 export const applyHit = (state: GameState): GameState => {
   const newPoints = state.points + state.difficulty.points;
-
-  let newTimeRemaining = state.timeRemaining;
-
-  if (state.isTimeBased && state.timeRemaining !== undefined && state.timeRemaining !== null) {
-    const bonusTime = typeof state.difficulty.timeBonus === 'number' && !isNaN(state.difficulty.timeBonus) 
-      ? state.difficulty.timeBonus 
-      : 0;
-    const currentTime = typeof state.timeRemaining === 'number' && !isNaN(state.timeRemaining) 
-      ? state.timeRemaining 
-      : 0;
-    const calculatedTime = currentTime + bonusTime;
-    newTimeRemaining = isNaN(calculatedTime) ? state.timeRemaining : calculatedTime;
-  }
+  const newTimeRemaining =
+    state.isTimeBased &&
+    state.timeRemaining !== undefined &&
+    state.timeRemaining !== null
+      ? calculateTimeBonus(
+          state.timeRemaining,
+          state.difficulty.timeBonus
+        )
+      : state.timeRemaining;
 
   return {
     ...state,

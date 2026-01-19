@@ -8,7 +8,11 @@
   cursor: pointer;
   overflow: hidden;
   will-change: transform, box-shadow, border-width;
-  transition: border-color var(--transition-duration), transform var(--transition-duration), box-shadow var(--transition-duration), border-width var(--transition-duration);
+  transition:
+    border-color var(--transition-duration),
+    transform var(--transition-duration),
+    box-shadow var(--transition-duration),
+    border-width var(--transition-duration);
 
   &:hover {
     border-color: var(--color-border-hover);
@@ -38,7 +42,9 @@
     pointer-events: none;
     background-color: var(--color-white);
     will-change: transform, filter;
-    transition: filter var(--transition-duration), transform var(--transition-duration);
+    transition:
+      filter var(--transition-duration),
+      transform var(--transition-duration);
 
     &--hit {
       filter: brightness(1.5) saturate(2);

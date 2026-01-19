@@ -43,11 +43,9 @@ describe('ScoreBoardComponent', () => {
           fixture.componentRef.setInput('playerName', playerName);
           fixture.detectChanges();
 
-          const playerStats =
-            fixture.nativeElement.querySelectorAll('.score-board__stat');
-          const playerValue = playerStats[0].querySelector(
-            '.score-board__value'
-          );
+          const boxes =
+            fixture.nativeElement.querySelectorAll('.score-board__box');
+          const playerValue = boxes[0].querySelector('.score-board__value');
           expect(playerValue.textContent.trim()).toBe(expected);
         });
       });
@@ -65,9 +63,9 @@ describe('ScoreBoardComponent', () => {
           fixture.componentRef.setInput('playerName', input);
           fixture.detectChanges();
 
-          const playerValue = fixture.nativeElement
-            .querySelectorAll('.score-board__stat')[0]
-            .querySelector('.score-board__value');
+          const boxes =
+            fixture.nativeElement.querySelectorAll('.score-board__box');
+          const playerValue = boxes[0].querySelector('.score-board__value');
           expect(playerValue.textContent.trim()).toBe(expected);
         });
       });
@@ -88,9 +86,9 @@ describe('ScoreBoardComponent', () => {
           fixture.componentRef.setInput('points', points);
           fixture.detectChanges();
 
-          const stats =
-            fixture.nativeElement.querySelectorAll('.score-board__stat');
-          const pointsValue = stats[1].querySelector('.score-board__value');
+          const boxes =
+            fixture.nativeElement.querySelectorAll('.score-board__box');
+          const pointsValue = boxes[1].querySelector('.score-board__value');
           expect(pointsValue.textContent.trim()).toBe(expected);
         });
       });
@@ -108,9 +106,9 @@ describe('ScoreBoardComponent', () => {
           fixture.componentRef.setInput('points', input);
           fixture.detectChanges();
 
-          const pointsValue = fixture.nativeElement
-            .querySelectorAll('.score-board__stat')[1]
-            .querySelector('.score-board__value');
+          const boxes =
+            fixture.nativeElement.querySelectorAll('.score-board__box');
+          const pointsValue = boxes[1].querySelector('.score-board__value');
           expect(pointsValue.textContent.trim()).toBe(expected);
         });
       });
@@ -118,12 +116,21 @@ describe('ScoreBoardComponent', () => {
 
     describe('template structure', () => {
       const expectedStructure = {
+        boxCount: 2,
         statCount: 2,
-        labels: [
-          { text: 'Jugador', i18n: '@@scoreboard.player.label' },
-          { text: 'Puntos', i18n: '@@scoreboard.points.label' },
+        icons: [
+          { src: 'icons/user-full.svg', alt: 'Usuario' },
+          { src: 'icons/trophy-full.svg', alt: 'Puntos' },
         ],
       };
+
+      it('should render correct number of box containers', () => {
+        fixture.detectChanges();
+
+        const boxes =
+          fixture.nativeElement.querySelectorAll('.score-board__box');
+        expect(boxes.length).toBe(expectedStructure.boxCount);
+      });
 
       it('should render correct number of stat divs', () => {
         fixture.detectChanges();
@@ -133,22 +140,20 @@ describe('ScoreBoardComponent', () => {
         expect(stats.length).toBe(expectedStructure.statCount);
       });
 
-      it('should have correct labels with i18n attributes', () => {
+      it('should have correct icons with proper attributes', () => {
         fixture.detectChanges();
 
-        const labels = fixture.nativeElement.querySelectorAll(
-          '.score-board__label'
-        );
-        expect(labels.length).toBe(expectedStructure.labels.length);
+        const icons =
+          fixture.nativeElement.querySelectorAll('.score-board__icon');
+        expect(icons.length).toBe(expectedStructure.icons.length);
 
-        expectedStructure.labels.forEach((expectedLabel, index) => {
-          const label = labels[index];
-          expect(label).toBeTruthy();
-          expect(label.textContent.trim()).toBe(expectedLabel.text);
-          const i18nAttribute = label.getAttribute('i18n');
-          if (i18nAttribute !== null) {
-            expect(i18nAttribute).toBe(expectedLabel.i18n);
-          }
+        expectedStructure.icons.forEach((expectedIcon, index) => {
+          const icon = icons[index] as HTMLImageElement;
+          expect(icon).toBeTruthy();
+          expect(icon.tagName).toBe('IMG');
+          expect(icon.src).toContain(expectedIcon.src);
+          expect(icon.alt).toBe(expectedIcon.alt);
+          expect(icon.getAttribute('aria-hidden')).toBe('true');
         });
       });
 
