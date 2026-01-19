@@ -24,7 +24,7 @@ Los use cases siguen los principios de:
 ### 1. `apply-hit.use-case.ts`
 
 #### Propósito
-Aplica la puntuación al jugador cuando golpea exitosamente el topo. Suma los puntos correspondientes según la dificultad actual del juego.
+Aplica la puntuación al jugador cuando golpea exitosamente el topo. Suma los puntos correspondientes según la dificultad actual del juego. Si el juego está en modo por tiempo, también añade tiempo bonus según la dificultad.
 
 #### Función
 ```typescript
@@ -32,27 +32,38 @@ export const applyHit = (state: GameState): GameState
 ```
 
 #### Parámetros
-- `state: GameState` - Estado actual del juego que contiene la puntuación y dificultad.
+- `state: GameState` - Estado actual del juego que contiene la puntuación, dificultad y tiempo restante.
 
 #### Retorno
-- `GameState` - Nuevo estado del juego con la puntuación actualizada.
+- `GameState` - Nuevo estado del juego con la puntuación y tiempo restante actualizados.
 
 #### Lógica
 1. Toma el estado actual del juego.
 2. Suma los puntos de la dificultad actual (`state.difficulty.points`) a los puntos existentes.
-3. Retorna un nuevo objeto `GameState` con los puntos actualizados, manteniendo el resto del estado sin cambios.
+3. Si el juego está en modo por tiempo (`state.isTimeBased === true` y `state.timeRemaining` está definido):
+   - Obtiene el tiempo bonus de la dificultad actual (`state.difficulty.timeBonus`).
+   - Suma el tiempo bonus al tiempo restante actual.
+4. Retorna un nuevo objeto `GameState` con los puntos y tiempo restante actualizados, manteniendo el resto del estado sin cambios.
 
 #### Ejemplo de uso
 ```typescript
 const currentState: GameState = {
   playerName: 'Jugador',
   points: 50,
-  difficulty: { id: 'medium', points: 20, ... }
+  timeRemaining: 15,
+  isTimeBased: true,
+  difficulty: { id: 'medium', points: 20, timeBonus: 1.5, ... }
 };
 
 const newState = applyHit(currentState);
 // newState.points = 70 (50 + 20)
+// newState.timeRemaining = 16.5 (15 + 1.5)
 ```
+
+#### Tiempo Bonus por Dificultad
+- **Baja**: +1 segundo por cada golpe exitoso
+- **Media**: +1.5 segundos por cada golpe exitoso
+- **Alta**: +2 segundos por cada golpe exitoso
 
 #### Dónde se usa
 - `src/app/presentation/pages/game/game.ts`: En el método `handleHit()` cuando el jugador golpea el topo activo.
@@ -61,6 +72,8 @@ const newState = applyHit(currentState);
 - **Inmutable**: No modifica el estado original.
 - **Puro**: Siempre retorna el mismo resultado para las mismas entradas.
 - **Determinístico**: El resultado depende únicamente de los parámetros de entrada.
+- **Recompensa dual**: Añade tanto puntos como tiempo bonus cuando es modo por tiempo.
+- **Basado en dificultad**: El tiempo bonus varía según la dificultad seleccionada.
 
 ---
 
@@ -353,18 +366,21 @@ El archivo define tres niveles de dificultad:
    - Multiplicador: 1
    - Intervalo: 1000ms (1 segundo)
    - Puntos por golpe: 10
+   - Tiempo bonus por golpe: 1 segundo
 
 2. **Medio (Medium)**
    - ID: `'medium'`
    - Multiplicador: 2
    - Intervalo: 750ms (0.75 segundos)
    - Puntos por golpe: 20
+   - Tiempo bonus por golpe: 1.5 segundos
 
 3. **Alto (High)**
    - ID: `'high'`
    - Multiplicador: 3
    - Intervalo: 500ms (0.5 segundos)
    - Puntos por golpe: 30
+   - Tiempo bonus por golpe: 2 segundos
 
 #### `GAME_CONFIG`
 
@@ -417,7 +433,7 @@ export const GAME_CONFIG = {
 4. Se navega a la página de juego.
 
 ### Durante el juego
-1. Usuario golpea el topo → `applyHit(gameState)` actualiza los puntos.
+1. Usuario golpea el topo → `applyHit(gameState)` actualiza los puntos y añade tiempo bonus según la dificultad (1s/1.5s/2s).
 2. Usuario cambia dificultad → `changeDifficulty(gameState, newDifficulty)` actualiza la dificultad.
 3. Usuario reinicia → `startGame(playerName, currentDifficulty, true)` reinicia puntos a 0 e inicia modo por tiempo.
 

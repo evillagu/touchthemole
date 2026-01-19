@@ -1,5 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { listDifficulties } from '../../../application/use-cases/difficulty.use-case';
 import { startGame } from '../../../application/use-cases/start-game.use-case';

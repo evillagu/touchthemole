@@ -47,13 +47,15 @@ describe('GameBoardComponent', () => {
         activeMoleIndexes: [1, 3],
         holeIndex: 3,
         shouldCall: true,
-        description: 'when holeIndex is in activeMoleIndexes with multiple moles',
+        description:
+          'when holeIndex is in activeMoleIndexes with multiple moles',
       },
       {
         activeMoleIndexes: [1, 3],
         holeIndex: 5,
         shouldCall: false,
-        description: 'when holeIndex is not in activeMoleIndexes with multiple moles',
+        description:
+          'when holeIndex is not in activeMoleIndexes with multiple moles',
       },
     ];
 
@@ -63,7 +65,10 @@ describe('GameBoardComponent', () => {
           it(`should ${shouldCall ? '' : 'not '}call onHit ${description}`, () => {
             const mockOnHit = jasmine.createSpy('onHit');
             fixture.componentRef.setInput('onHit', mockOnHit);
-            fixture.componentRef.setInput('activeMoleIndexes', activeMoleIndexes);
+            fixture.componentRef.setInput(
+              'activeMoleIndexes',
+              activeMoleIndexes
+            );
 
             component.handleHit(holeIndex);
 
@@ -142,7 +147,10 @@ describe('GameBoardComponent', () => {
         ({ holes, activeMoleIndexes, expectedActive, description }) => {
           it(`should pass correct isActive to each button ${description}`, () => {
             fixture.componentRef.setInput('holes', holes);
-            fixture.componentRef.setInput('activeMoleIndexes', activeMoleIndexes);
+            fixture.componentRef.setInput(
+              'activeMoleIndexes',
+              activeMoleIndexes
+            );
             fixture.detectChanges();
 
             const buttons =
@@ -151,9 +159,13 @@ describe('GameBoardComponent', () => {
               const buttonElement = button.querySelector('button');
               expect(buttonElement).toBeTruthy();
               if (expectedActive[index]) {
-                expect(buttonElement?.classList.contains('mole-button--active')).toBe(true);
+                expect(
+                  buttonElement?.classList.contains('mole-button--active')
+                ).toBe(true);
               } else {
-                expect(buttonElement?.classList.contains('mole-button--active')).toBe(false);
+                expect(
+                  buttonElement?.classList.contains('mole-button--active')
+                ).toBe(false);
               }
             });
           });

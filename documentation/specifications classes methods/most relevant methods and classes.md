@@ -489,7 +489,7 @@ Contador que rastrea cuántos topos han aparecido desde el inicio o reinicio del
 1. Obtiene los índices de topos activos actuales (`activeMoleIndexes()`)
 2. Verifica que el índice golpeado esté en el array de topos activos (`currentIndexes.includes(holeIndex)`)
 3. Si el golpe es válido:
-   - Aplica el golpe usando `applyHit()` para sumar puntos
+   - Aplica el golpe usando `applyHit()` para sumar puntos y tiempo bonus (si es modo por tiempo)
    - Actualiza el estado del juego
    - Elimina el topo golpeado del array usando `filter()` (los otros topos permanecen activos)
    - Actualiza `activeMoleIndexes` con los topos restantes
@@ -830,7 +830,7 @@ component.onHit();
 
 **Ubicación**: `src/app/presentation/components/score-board/score-board.ts`
 
-**Propósito**: Componente presentacional puro que muestra el nombre del jugador y la puntuación actual.
+**Propósito**: Componente presentacional puro que muestra el nombre del jugador y la puntuación actual mediante iconos SVG y valores numéricos.
 
 #### Propiedades Públicas (Inputs)
 
@@ -838,13 +838,45 @@ component.onHit();
 
 Nombre del jugador a mostrar.
 
-**Uso**: Se muestra en el template como texto.
+**Uso**: Se muestra en el template junto con un icono de usuario (`user-full.svg`).
 
 ##### `points: InputSignal<number>`
 
 Puntuación actual del jugador.
 
-**Uso**: Se muestra en el template como número.
+**Uso**: Se muestra en el template junto con un icono de trofeo (`trophy-full.svg`).
+
+#### Estructura Visual
+
+El componente utiliza una estructura visual basada en iconos SVG:
+
+- **Icono de Usuario**: `user-full.svg` - Representa visualmente al jugador
+- **Icono de Trofeo**: `trophy-full.svg` - Representa visualmente los puntos
+- **Estilos de Iconos**: 
+  - Color blanco mediante `filter: brightness(0) invert(1)`
+  - Forma circular con `border-radius: 50%`
+  - Tamaño relativo al texto (`1.2em`)
+  - Opacidad consistente con las etiquetas
+
+#### Estructura HTML
+
+El componente utiliza contenedores `score-board__box` para agrupar iconos y valores:
+
+```html
+<div class="score-board__box">
+  <img src="icons/user-full.svg" alt="Usuario" class="score-board__icon" />
+  <div class="score-board__stat">
+    <strong>{{ playerName() }}</strong>
+  </div>
+</div>
+
+<div class="score-board__box">
+  <img src="icons/trophy-full.svg" alt="Puntos" class="score-board__icon" />
+  <div class="score-board__stat">
+    <strong>{{ points() }}</strong>
+  </div>
+</div>
+```
 
 #### Métodos Públicos
 
@@ -854,6 +886,8 @@ Puntuación actual del jugador.
 - **Presentacional**: Solo muestra datos, no tiene lógica
 - **Reactivo**: Se actualiza automáticamente cuando cambian los inputs
 - **Reutilizable**: Puede usarse en cualquier parte donde se necesite mostrar puntuación
+- **Visual**: Utiliza iconos SVG para mejorar la experiencia visual
+- **Accesible**: Los iconos tienen `aria-hidden="true"` y `alt` descriptivo
 
 ---
 

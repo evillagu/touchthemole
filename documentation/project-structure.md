@@ -96,8 +96,8 @@ touch-the-mole/
 │   │   │   │   │
 │   │   │   │   └── score-board/               # Componente del marcador
 │   │   │   │       ├── score-board.ts         # Lógica del marcador (muestra nombre y puntos)
-│   │   │   │       ├── score-board.html       # Template del marcador
-│   │   │   │       ├── score-board.scss       # Estilos del marcador (BEM)
+│   │   │   │       ├── score-board.html       # Template del marcador (usa iconos SVG: user-full.svg, trophy-full.svg)
+│   │   │   │       ├── score-board.scss       # Estilos del marcador (BEM, iconos circulares blancos)
 │   │   │   │       └── score-board.spec.ts    # Tests del componente score-board
 │   │   │   │
 │   │   │   └── pages/                         # Componentes de página (orquestación)

@@ -13,6 +13,16 @@
     padding: 0 12px;
   }
 
+  &__icon {
+    width: 1.2em;
+    height: 1.2em;
+    opacity: var(--opacity-label);
+    flex-shrink: 0;
+    object-fit: contain;
+    border-radius: 50%;
+    filter: brightness(0) invert(1);
+  }
+
   &__label {
     font-size: var(--font-size-small);
     opacity: var(--opacity-label);
@@ -24,5 +34,12 @@
     font-size: var(--font-size-large);
     font-weight: var(--font-weight-bold);
   }
+  &__box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--spacing-small);
+    text-align: center;
+  }
 }
-

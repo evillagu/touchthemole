@@ -9,7 +9,8 @@ export const startGame = (
   gameDurationSeconds?: number
 ): GameState => {
   const safeName = playerName.trim().slice(0, GAME_CONFIG.maxPlayerNameLength);
-  const duration = gameDurationSeconds ?? GAME_CONFIG.defaultGameDurationSeconds;
+  const duration =
+    gameDurationSeconds ?? GAME_CONFIG.defaultGameDurationSeconds;
   return {
     playerName: safeName.length
       ? safeName

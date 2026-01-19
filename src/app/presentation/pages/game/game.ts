@@ -51,15 +51,24 @@ export class GamePageComponent implements OnDestroy {
   private hasActiveHitEffect = signal<boolean>(false);
 
   constructor() {
-    const loadedState = this.repository.load();
-    this.gameState = signal<GameState>(
-      loadedState ??
-        startGame(GAME_CONFIG.defaultPlayerName, this.difficulties[0])
-    );
+    const initialState = this.createInitialState();
+    this.gameState = signal<GameState>(initialState);
     this.isGameStarted.set(false);
     this.moleCounter = 0;
     this.handleHit = this.initializeHandleHit();
     this.initializeDifficultyEffect();
+  }
+
+  private createInitialState(): GameState {
+    const loadedState = this.repository.load();
+    if (loadedState) {
+      const normalizedDifficulty = resolveDifficulty(loadedState.difficulty.id);
+      return {
+        ...loadedState,
+        difficulty: normalizedDifficulty,
+      };
+    }
+    return startGame(GAME_CONFIG.defaultPlayerName, this.difficulties[0]);
   }
 
   onDifficultyChange(event: Event): void {
@@ -122,7 +131,10 @@ export class GamePageComponent implements OnDestroy {
     }
     const currentBaseInterval = this.gameState().difficulty.intervalMs;
     const currentTimeRemaining = this.gameState().timeRemaining;
-    const currentInterval = this.calculateMoleInterval(currentBaseInterval, currentTimeRemaining);
+    const currentInterval = this.calculateMoleInterval(
+      currentBaseInterval,
+      currentTimeRemaining
+    );
     if (currentInterval !== originalInterval) {
       clearInterval(this.moleInterval!);
       this.moleInterval = null;
@@ -301,7 +313,10 @@ export class GamePageComponent implements OnDestroy {
     this.showGameOver.set(false);
   }
 
-  private calculateMoleInterval(baseInterval: number, timeRemaining?: number): number {
+  private calculateMoleInterval(
+    baseInterval: number,
+    timeRemaining?: number
+  ): number {
     if (!timeRemaining || timeRemaining > GAME_CONFIG.speedIncreaseThreshold) {
       return baseInterval;
     }
